@@ -6,6 +6,8 @@ import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.parse.FindCallback;
+import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
@@ -102,6 +104,23 @@ public class ParseFacade<T> {
 			return (T) Proxy.newProxyInstance(facade.clazz.getClassLoader(), facade.interfaces, new ParseQueryOrderDescHandler(pq));
 		}
 		
+		public List<T> find() throws ParseException {
+			return facade.wrap(pq.find());
+		}
+
+		public void findInBackground(final ListCallback<T> callback) {
+			pq.findInBackground(new FindCallback() {
+				@Override
+				public void done(List<ParseObject> list, ParseException e) {
+					if (e == null) {
+						callback.done(facade.wrap(list));
+					} else {
+						callback.error(e);
+					}
+				}
+			});
+		}
+
 		public ParseQuery parseQuery() {
 			return pq;
 		}
