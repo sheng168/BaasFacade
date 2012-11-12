@@ -84,7 +84,7 @@ public class ParseFacade<T> {
 		ParseFacade<T> facade;
 		ParseQuery pq;
 		
-		public Query(ParseFacade<T> parseFacade) {
+		protected Query(ParseFacade<T> parseFacade) {
 			this.facade = parseFacade;
 			pq = new ParseQuery(parseFacade.clazz.getSimpleName());
 		}
