@@ -8,7 +8,7 @@
 
     <instrumentation
         android:name="android.test.InstrumentationTestRunner"
-        android:targetPackage="us.jsy.android.shared" />
+        android:targetPackage="shared.parse.facade" />
 
     <application
         android:icon="@drawable/ic_launcher"
