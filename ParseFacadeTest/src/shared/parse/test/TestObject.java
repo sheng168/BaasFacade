@@ -1,4 +1,4 @@
-package us.jsy.android.shared.test;
+package shared.parse.test;
 
 import java.util.Date;
 

@@ -1,27 +1,18 @@
-package us.jsy.android.shared.test;
+package shared.parse.test;
 
 import java.util.ArrayList;
 import java.util.Date;
 
 import shared.parse.ParseFacade;
-
-import junit.framework.TestCase;
-
 import android.content.Context;
-import android.test.AndroidTestCase;
 
 import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
-public class ParseFacadeTest extends AndroidTestCase {
+public class ParseFacadeTest extends BaseParseTestCase {
 	public void testParseNative() throws ParseException {
-		Parse.setLogLevel(Parse.LOG_LEVEL_VERBOSE);
-		Context context = this.getContext();
-		assertNotNull(context);
-		Parse.initialize(context, "xUodRIjJ4mnNJkBLK5N5YGxABdqRYEPx2eiO7X6n", "kB53FUFAW5G8OtABzzUJAJo4lzjiMJEGhBF9QLX7"); 
-
 		ParseObject to = new ParseObject("TestObject");
 		to.put("stringField", "name");
 		to.put("intField", 1987);
