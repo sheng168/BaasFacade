@@ -71,7 +71,15 @@ public class ParseFacade<T> {
 		return r;
 	}
 	
+	/**
+	 * @deprecated rename to newQuery to be clearer
+	 * @return
+	 */
 	public Query<T> query() {
+		return newQuery();
+	}
+	
+	public Query<T> newQuery() {
 //		new ParseQuery(RegionUser.class.getSimpleName())
 //		.whereEqualTo("name", name)
 //		.whereEqualTo("user", ParseUser.getCurrentUser())
@@ -80,13 +88,33 @@ public class ParseFacade<T> {
 		return new Query<T>(this);
 	}
 	
+	public Query<T> newOrQuery(Query<T>... queries) {
+//		new ParseQuery(RegionUser.class.getSimpleName())
+//		.whereEqualTo("name", name)
+//		.whereEqualTo("user", ParseUser.getCurrentUser())
+//		.
+
+		ArrayList<ParseQuery> list = new ArrayList<ParseQuery>();
+		for (Query<T> q : queries) {
+			list.add(q.pq);
+		}
+		
+		Query<T> query = new Query<T>(this);
+		query.pq = ParseQuery.or(list);
+		return query;
+	}
+	
 	public static class Query<T> {
 		ParseFacade<T> facade;
 		ParseQuery pq;
 		
 		protected Query(ParseFacade<T> parseFacade) {
 			this.facade = parseFacade;
-			pq = new ParseQuery(parseFacade.clazz.getSimpleName());
+			String simpleName = parseFacade.clazz.getSimpleName();
+			if ("User".equals(simpleName) || "Installation".equals(simpleName)) {
+				simpleName = "_" + simpleName;
+			}
+			pq = new ParseQuery(simpleName);
 		}
 
 		@SuppressWarnings("unchecked")
@@ -165,6 +193,11 @@ public class ParseFacade<T> {
 //				throw e;
 //			}
 			// return something
+		}
+
+		@Override
+		public String toString() {
+			return super.toString() + " " + obj;
 		}
 	}
 	
