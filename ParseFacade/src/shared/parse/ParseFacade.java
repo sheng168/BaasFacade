@@ -176,6 +176,8 @@ public class ParseFacade<T> {
 						Object object = obj.get(key);
 						if (m.getReturnType().isPrimitive() && object == null) {
 							return 0;
+						} else if (object != null && !m.getReturnType().isInstance(object)) {
+							return null;
 						} else {
 							return object;
 						}
