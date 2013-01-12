@@ -176,6 +176,8 @@ public class ParseFacade<T> {
 						Object object = obj.get(key);
 						if (m.getReturnType().isPrimitive() && object == null) {
 							return 0;
+						} else if (object != null && ParseBase.class.isAssignableFrom(m.getReturnType())) {
+							return ParseFacade.get(m.getReturnType()).wrap((ParseObject) object);
 						} else if (object != null && !m.getReturnType().isInstance(object)) {
 							return null;
 						} else {
@@ -183,10 +185,17 @@ public class ParseFacade<T> {
 						}
 					}
 				} else {
+					// set value
 					Object object = args[0];
 					if (key.equals("objectId"))
 						System.out.println("value " + object);
-					obj.put(key, object);
+					
+					if (object instanceof ParseBase) {
+						obj.put(key, ((ParseBase) object).parseObject());
+					} else {
+						obj.put(key, object);
+					}
+					
 					return null;
 				}
 //			} catch (InvocationTargetException e) {
