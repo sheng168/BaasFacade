@@ -222,7 +222,11 @@ public class ParseFacade<T> {
 			if (args.length == 0) {
 				throw new UnsupportedOperationException("Can only set values, not read from query");
 			} else {
-				pq.whereEqualTo(name, args[0]);
+				Object arg = args[0];
+				if (arg instanceof ParseBase) {
+					arg = ((ParseBase)arg).parseObject();
+				}
+				pq.whereEqualTo(name, arg);
 				return null;
 			}
 		}
