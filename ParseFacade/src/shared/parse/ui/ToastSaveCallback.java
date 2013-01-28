@@ -6,7 +6,7 @@ import android.widget.Toast;
 import com.parse.ParseException;
 import com.parse.SaveCallback;
 
-final class ToastSaveCallback extends SaveCallback {
+public class ToastSaveCallback extends SaveCallback {
 	public ToastSaveCallback(Context ctx) {
 		this.ctx = ctx;
 	}
