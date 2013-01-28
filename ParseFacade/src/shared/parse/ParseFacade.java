@@ -63,6 +63,11 @@ public class ParseFacade<T> {
 		return (T)obj;
 	}
 
+	public T wrap(String objectId) {
+		ParseObject po = ParseObject.createWithoutData(clazz.getSimpleName(), objectId);
+		return wrap(po);
+	}
+
 	public List<T> wrap(List<ParseObject> l) {
 		ArrayList<T> r = new ArrayList<T>();
 		for (ParseObject parseObject : l) {
