@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.parse.FindCallback;
+import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -80,6 +81,7 @@ public class ParseFacade<T> {
 	 * @deprecated rename to newQuery to be clearer
 	 * @return
 	 */
+	@Deprecated
 	public Query<T> query() {
 		return newQuery();
 	}
@@ -153,6 +155,18 @@ public class ParseFacade<T> {
 				}
 			});
 		}
+		
+		public void getInBackground(String objectId, final shared.parse.GetCallback<T> callback) {
+			pq.getInBackground(objectId, new GetCallback() {
+				@Override
+				public void done(ParseObject o, ParseException e) {
+					if (e == null)
+						callback.done(facade.wrap(o));
+					else
+						callback.error(e);
+				}
+			});
+		}
 
 		public ParseQuery parseQuery() {
 			return pq;
@@ -166,6 +180,7 @@ public class ParseFacade<T> {
 			this.obj = obj;
 		}
 
+		@Override
 		public Object invoke(Object proxy, Method m, Object[] args)
 				throws Throwable {
 //			try {
@@ -174,16 +189,21 @@ public class ParseFacade<T> {
 				if (args.length == 0) {
 					if (ParseBase.PARSE_OBJECT.equals(name))
 						return obj;
-					String typeName = m.getReturnType().getName();
+				final Class<?> returnType = m.getReturnType();
+				String typeName = returnType.getName();
 					if (typeName.equalsIgnoreCase("float")) {
 						return (float)obj.getDouble(key);
 					} else {
 						Object object = obj.get(key);
-						if (m.getReturnType().isPrimitive() && object == null) {
+					if (returnType.isPrimitive() && object == null) {
 							return 0;
-						} else if (object != null && ParseObject.class.isInstance(object) && ParseBase.class.isAssignableFrom(m.getReturnType())) {
-							return ParseFacade.get(m.getReturnType()).wrap((ParseObject) object);
-						} else if (object != null && !m.getReturnType().isInstance(object)) {
+					} else if (object != null
+							&& ParseObject.class.isInstance(object)
+							&& ParseBase.class.isAssignableFrom(returnType)) {
+						return ParseFacade.get(returnType).wrap(
+								(ParseObject) object);
+					} else if (object != null && !returnType.isInstance(object)
+							&& !returnType.isPrimitive()) {
 							return null;
 						} else {
 							return object;
