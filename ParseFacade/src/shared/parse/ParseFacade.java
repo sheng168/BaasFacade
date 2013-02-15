@@ -106,8 +106,13 @@ public class ParseFacade<T> {
 			list.add(q.pq);
 		}
 		
+		Query<T> query = wrap(ParseQuery.or(list));
+		return query;
+	}
+	
+	public Query<T> wrap(ParseQuery pq) {
 		Query<T> query = new Query<T>(this);
-		query.pq = ParseQuery.or(list);
+		query.pq = pq;
 		return query;
 	}
 	
