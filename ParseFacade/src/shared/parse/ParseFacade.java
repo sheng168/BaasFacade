@@ -6,6 +6,11 @@ import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.List;
 
+import shared.parse.query.ParseQueryEqualHandler;
+import shared.parse.query.ParseQueryIncludeHandler;
+import shared.parse.query.ParseQueryOrderAscHandler;
+import shared.parse.query.ParseQueryOrderDescHandler;
+
 import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
@@ -144,6 +149,11 @@ public class ParseFacade<T> {
 			return (T) Proxy.newProxyInstance(facade.clazz.getClassLoader(), facade.interfaces, new ParseQueryOrderDescHandler(pq));
 		}
 		
+		@SuppressWarnings("unchecked") // cast to T
+		public T include() {
+			return (T) Proxy.newProxyInstance(facade.clazz.getClassLoader(), facade.interfaces, new ParseQueryIncludeHandler(pq));
+		}
+
 		public List<T> find() throws ParseException {
 			return facade.wrap(pq.find());
 		}
@@ -240,78 +250,5 @@ public class ParseFacade<T> {
 		public String toString() {
 			return super.toString() + " " + obj;
 		}
-	}
-	
-	private static class ParseQueryEqualHandler implements InvocationHandler {
-		ParseQuery pq;
-		
-		@Override
-		public Object invoke(Object proxy, Method m, Object[] args)
-				throws Throwable {
-			String name = m.getName();
-			if (args.length == 0) {
-				throw new UnsupportedOperationException("Can only set values, not read from query");
-			} else {
-				Object arg = args[0];
-				if (arg instanceof ParseBase) {
-					arg = ((ParseBase)arg).parseObject();
-				}
-				pq.whereEqualTo(name, arg);
-				return null;
-			}
-		}
-
-		public ParseQueryEqualHandler(ParseQuery pq) {
-			super();
-			this.pq = pq;
-		}
-		
-	}
-
-	private static abstract class ParseQueryOrderHandler implements InvocationHandler {
-		ParseQuery pq;
-		
-		@Override
-		public Object invoke(Object proxy, Method m, Object[] args)
-				throws Throwable {
-			String name = m.getName();
-			if (args.length == 0) {
-				orderBy(name);
-				return null;
-			} else {
-				throw new UnsupportedOperationException("Can only read values");
-			}
-		}
-
-		abstract void orderBy(String name);
-
-		public ParseQueryOrderHandler(ParseQuery pq) {
-			this.pq = pq;
-		}
-		
-	}
-	
-	private static class ParseQueryOrderDescHandler extends ParseQueryOrderHandler {
-		public ParseQueryOrderDescHandler(ParseQuery pq) {
-			super(pq);
-		}
-
-		@Override
-		void orderBy(String name) {
-			pq.orderByDescending(name);
-		}
-
-	}
-
-	private static class ParseQueryOrderAscHandler extends ParseQueryOrderHandler {
-		public ParseQueryOrderAscHandler(ParseQuery pq) {
-			super(pq);
-		}
-
-		@Override
-		void orderBy(String name) {
-			pq.orderByAscending(name);
-		}
-
 	}
 }
