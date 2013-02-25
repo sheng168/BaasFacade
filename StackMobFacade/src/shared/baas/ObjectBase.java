@@ -1,7 +1,4 @@
-package shared.parse;
-
-import shared.baas.ObjectBase;
-import shared.baas.ObjectData;
+package shared.baas;
 
 import com.parse.ParseObject;
 
@@ -14,7 +11,7 @@ import com.parse.ParseObject;
  * @author sheng
  *
  */
-public interface ParseBase extends ObjectBase {
+public interface ObjectBase {
 	static final String PARSE_OBJECT = "parseObject";
 	
 	/**
@@ -27,10 +24,6 @@ public interface ParseBase extends ObjectBase {
 //	String objectId();
 //	void objectId(String in);
 //	
-//	@Override
 //	Date createdAt();
-//	@Override
 //	Date updatedAt();
-	
-	ObjectData objectData();
 }

@@ -1,6 +1,7 @@
-package shared.baas.stackmob;
+package shared.baas.test;
 
-import com.parse.ParseObject;
+import shared.baas.ObjectBase;
+
 
 /**
  * Extend this interface to define you ParseObject class field.
@@ -11,19 +12,11 @@ import com.parse.ParseObject;
  * @author sheng
  *
  */
-public interface ParseBase {
-	static final String PARSE_OBJECT = "parseObject";
-	
-	/**
-	 * @deprecated 
-	 * @return the backing object
-	 */
-	@Deprecated
-	ParseObject parseObject();
-	
-//	String objectId();
-//	void objectId(String in);
-//	
-//	Date createdAt();
-//	Date updatedAt();
+public interface GameScore extends ObjectBase {
+	String name();
+	void name(String in);
+
+	int score();
+	void score(int i);
+
 }

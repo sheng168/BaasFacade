@@ -4,7 +4,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
-import shared.baas.stackmob.ParseBase;
+import shared.baas.ObjectBase;
 
 import com.parse.ParseQuery;
 
@@ -25,7 +25,7 @@ public class ParseQueryIncludeHandler implements InvocationHandler {
 			include(name);
 			
 			final Class<?> returnType = m.getReturnType();
-			if (ParseBase.class.isAssignableFrom(returnType)) {
+			if (ObjectBase.class.isAssignableFrom(returnType)) {
 				// support chaining
 				String prefix = name + ".";				
 				final Class[] interfaces = {returnType};

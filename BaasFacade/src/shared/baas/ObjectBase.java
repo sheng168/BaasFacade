@@ -1,9 +1,8 @@
-package shared.parse;
+package shared.baas;
 
-import shared.baas.ObjectBase;
-import shared.baas.ObjectData;
+import java.util.Date;
+import java.util.concurrent.Future;
 
-import com.parse.ParseObject;
 
 /**
  * Extend this interface to define you ParseObject class field.
@@ -14,23 +13,28 @@ import com.parse.ParseObject;
  * @author sheng
  *
  */
-public interface ParseBase extends ObjectBase {
+public interface ObjectBase {
 	static final String PARSE_OBJECT = "parseObject";
+	static final String SAVE = "saveAsync";
+	static final String DELETE = "deleteAsync";
 	
 	/**
-	 * @deprecated 
+	 * @deprecated in case of emergency only
 	 * @return the backing object
 	 */
 	@Deprecated
-	ParseObject parseObject();
+	Object unwrap();
 	
-//	String objectId();
-//	void objectId(String in);
-//	
-//	@Override
-//	Date createdAt();
-//	@Override
-//	Date updatedAt();
+	@Override
+	String toString();
 	
-	ObjectData objectData();
+	String objectId();
+	void objectId(String in);
+	
+	Date createdAt();
+	Date updatedAt();
+	
+	Future<? extends ObjectBase> saveAsync(GetCallback<? extends ObjectBase> getCallback);
+	Future<? extends ObjectBase> deleteAsync(GetCallback<? extends ObjectBase> getCallback);
+
 }

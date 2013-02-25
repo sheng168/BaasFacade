@@ -17,10 +17,10 @@ public class BaseParseTestCase extends AndroidTestCase {
 		Context context = this.getContext();
 		assertNotNull(context);
 
-		// nymsg account
+		// parse@jsy.us account demo app
 		Parse.initialize(this.getContext(),
-				"mDrOLT1hvbwEyL8E3QQjpAXaqA2hgEVISIodh4zD",
-				"mKMDvVnmEaqIdxUTDm9sm3IFkswbLP1RfjzDj7pP");
+				"XLjaPbXGzUGcIvpOKF9dTdTUV9wXpnvuaAHnMvHJ",
+				"xjTYhU1sSqtE89w5ucryZnptWdNtppAMI3W6vyBF");
 		super.setUp();
 	}
 

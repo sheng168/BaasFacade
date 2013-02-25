@@ -1,7 +1,8 @@
 package shared.baas;
 
-import shared.baas.stackmob.ParseFacade;
-import shared.baas.stackmob.ParseFacade.Query;
+import shared.baas.stackmob.BasicQuery;
+import shared.baas.stackmob.Query;
+import shared.baas.stackmob.StackMobFacade;
 
 public interface DataStoreFacade<T> {
 
@@ -11,8 +12,8 @@ public interface DataStoreFacade<T> {
 	 */
 	public abstract T create();
 
-	public abstract Query<T> newQuery();
+	public abstract BasicQuery<T> newQuery();
 
-	public abstract Query<T> newOrQuery(Query<T>... queries);
+	public abstract BasicQuery<T> newOrQuery(Query<T>... queries);
 
 }

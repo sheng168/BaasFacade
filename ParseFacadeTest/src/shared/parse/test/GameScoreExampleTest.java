@@ -39,20 +39,32 @@ public class GameScoreExampleTest extends BaseParseTestCase {
 			}
 		});
 
+		{
 		//
-		gameScore = GameScore.PF.create();
-		gameScore.parseObject().setObjectId(id);
-		gameScore.parseObject().refreshInBackground(new RefreshCallback() {
+		final GameScore gameScore2 = GameScore.PF.create();
+		gameScore2.parseObject().setObjectId(id);
+		gameScore2.parseObject().refreshInBackground(new RefreshCallback() {
 			@Override
 			public void done(ParseObject o, ParseException e) {
 				if (e == null) {
 					// do something with gameScore
+					
+					
+					// read application values
+					int score = gameScore2.score();
+					String playerName = gameScore2.playerName();
+					boolean cheatMode = gameScore2.cheatMode();
+
+					// read special system managed values
+					String objectId = gameScore2.parseObject().getObjectId();
+					Date updatedAt = gameScore2.parseObject().getUpdatedAt();
+					Date createdAt = gameScore2.parseObject().getCreatedAt();
 				} else {
 					// something went wrong
 				}
 			}
 		});
-
+		}
 		//
 		Query<GameScore> query = GameScore.PF.query();
 		query.equalTo().playerName("Sean Plott");
@@ -72,14 +84,6 @@ public class GameScoreExampleTest extends BaseParseTestCase {
 			}
 		});
 
-		// read application values
-		int score = gameScore.score();
-		String playerName = gameScore.playerName();
-		boolean cheatMode = gameScore.cheatMode();
 
-		// read special system managed values
-		String objectId = gameScore.parseObject().getObjectId();
-		Date updatedAt = gameScore.parseObject().getUpdatedAt();
-		Date createdAt = gameScore.parseObject().getCreatedAt();
 	}
 }

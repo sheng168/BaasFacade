@@ -7,14 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import shared.baas.DataStoreFacade;
-import shared.baas.stackmob.query.ParseQueryEqualHandler;
-import shared.baas.stackmob.query.ParseQueryIncludeHandler;
-import shared.baas.stackmob.query.ParseQueryOrderAscHandler;
-import shared.baas.stackmob.query.ParseQueryOrderDescHandler;
+import shared.baas.ObjectBase;
 
-import com.parse.FindCallback;
-import com.parse.GetCallback;
-import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
@@ -27,11 +21,11 @@ import com.parse.ParseQuery;
  *
  * @param <T>
  */
-public class ParseFacade<T> implements DataStoreFacade<T> {
+public class StackMobFacade<T> implements DataStoreFacade<T> {
 	Class<T> clazz;
 	Class<?>[] interfaces;
 
-	private ParseFacade(Class<T> clazz) {
+	private StackMobFacade(Class<T> clazz) {
 		super();
 		assert clazz != null;
 		assert clazz.isInterface();
@@ -47,8 +41,8 @@ public class ParseFacade<T> implements DataStoreFacade<T> {
 	 * @param clazz interface that extends ParseBase
 	 * @return may be a cache or new instance
 	 */
-	public static <T> ParseFacade<T> get(Class<T> clazz) {
-		return new ParseFacade<T>(clazz);
+	public static <T> StackMobFacade<T> get(Class<T> clazz) {
+		return new StackMobFacade<T>(clazz);
 	}
 	
 	/* (non-Javadoc)
@@ -88,7 +82,7 @@ public class ParseFacade<T> implements DataStoreFacade<T> {
 	 * @return
 	 */
 	@Deprecated
-	public Query<T> query() {
+	public BasicQuery<T> query() {
 		return newQuery();
 	}
 	
@@ -96,7 +90,7 @@ public class ParseFacade<T> implements DataStoreFacade<T> {
 	 * @see shared.parse.DataStoreFacade#newQuery()
 	 */
 	@Override
-	public Query<T> newQuery() {
+	public BasicQuery<T> newQuery() {
 //		new ParseQuery(RegionUser.class.getSimpleName())
 //		.whereEqualTo("name", name)
 //		.whereEqualTo("user", ParseUser.getCurrentUser())
@@ -109,7 +103,7 @@ public class ParseFacade<T> implements DataStoreFacade<T> {
 	 * @see shared.parse.DataStoreFacade#newOrQuery(shared.parse.ParseFacade.Query)
 	 */
 	@Override
-	public Query<T> newOrQuery(Query<T>... queries) {
+	public BasicQuery<T> newOrQuery(Query<T>... queries) {
 //		new ParseQuery(RegionUser.class.getSimpleName())
 //		.whereEqualTo("name", name)
 //		.whereEqualTo("user", ParseUser.getCurrentUser())
@@ -120,81 +114,14 @@ public class ParseFacade<T> implements DataStoreFacade<T> {
 			list.add(q.pq);
 		}
 		
-		Query<T> query = wrap(ParseQuery.or(list));
+		BasicQuery<T> query = wrap(ParseQuery.or(list));
 		return query;
 	}
 	
-	public Query<T> wrap(ParseQuery pq) {
+	public BasicQuery<T> wrap(ParseQuery pq) {
 		Query<T> query = new Query<T>(this);
 		query.pq = pq;
 		return query;
-	}
-	
-	public static class Query<T> {
-		ParseFacade<T> facade;
-		ParseQuery pq;
-		
-		protected Query(ParseFacade<T> parseFacade) {
-			this.facade = parseFacade;
-			String simpleName = parseFacade.clazz.getSimpleName();
-			if ("User".equals(simpleName) || "Installation".equals(simpleName)) {
-				simpleName = "_" + simpleName;
-			}
-			pq = new ParseQuery(simpleName);
-		}
-
-		@SuppressWarnings("unchecked")
-		public T equalTo() {
-			return (T) Proxy.newProxyInstance(facade.clazz.getClassLoader(), facade.interfaces, new ParseQueryEqualHandler(pq));
-		}
-
-		@SuppressWarnings("unchecked")
-		public T orderAsc() {
-			return (T) Proxy.newProxyInstance(facade.clazz.getClassLoader(), facade.interfaces, new ParseQueryOrderAscHandler(pq));
-		}
-
-		@SuppressWarnings("unchecked")
-		public T orderDesc() {
-			return (T) Proxy.newProxyInstance(facade.clazz.getClassLoader(), facade.interfaces, new ParseQueryOrderDescHandler(pq));
-		}
-		
-		@SuppressWarnings("unchecked") // cast to T
-		public T include() {
-			return (T) Proxy.newProxyInstance(facade.clazz.getClassLoader(), facade.interfaces, new ParseQueryIncludeHandler(pq));
-		}
-
-		public List<T> find() throws ParseException {
-			return facade.wrap(pq.find());
-		}
-
-		public void findInBackground(final ListCallback<T> callback) {
-			pq.findInBackground(new FindCallback() {
-				@Override
-				public void done(List<ParseObject> list, ParseException e) {
-					if (e == null) {
-						callback.done(facade.wrap(list));
-					} else {
-						callback.error(e);
-					}
-				}
-			});
-		}
-		
-		public void getInBackground(String objectId, final shared.baas.stackmob.GetCallback<T> callback) {
-			pq.getInBackground(objectId, new GetCallback() {
-				@Override
-				public void done(ParseObject o, ParseException e) {
-					if (e == null)
-						callback.done(facade.wrap(o));
-					else
-						callback.error(e);
-				}
-			});
-		}
-
-		public ParseQuery parseQuery() {
-			return pq;
-		}
 	}
 	
 	static class ParseObjectHandler implements InvocationHandler {
@@ -211,7 +138,7 @@ public class ParseFacade<T> implements DataStoreFacade<T> {
 				String name = m.getName();
 				String key = name; //.substring(3); // assume get set
 				if (args.length == 0) {
-					if (ParseBase.PARSE_OBJECT.equals(name))
+					if (ObjectBase.PARSE_OBJECT.equals(name))
 						return obj;
 				final Class<?> returnType = m.getReturnType();
 				String typeName = returnType.getName();
@@ -223,8 +150,8 @@ public class ParseFacade<T> implements DataStoreFacade<T> {
 							return 0;
 					} else if (object != null
 							&& ParseObject.class.isInstance(object)
-							&& ParseBase.class.isAssignableFrom(returnType)) {
-						return ((ParseFacade<?>)ParseFacade.get(returnType)).wrap(
+							&& ObjectBase.class.isAssignableFrom(returnType)) {
+						return ((StackMobFacade<?>)StackMobFacade.get(returnType)).wrap(
 								(ParseObject) object);
 					} else if (object != null && !returnType.isInstance(object)
 							&& !returnType.isPrimitive()) {
@@ -239,8 +166,8 @@ public class ParseFacade<T> implements DataStoreFacade<T> {
 					if (key.equals("objectId"))
 						System.out.println("value " + object);
 					
-					if (object instanceof ParseBase) {
-						obj.put(key, ((ParseBase) object).parseObject());
+					if (object instanceof ObjectBase) {
+						obj.put(key, ((ObjectBase) object).parseObject());
 					} else {
 						obj.put(key, object);
 					}
