@@ -6,6 +6,7 @@ import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.List;
 
+import shared.baas.DataStoreFacade;
 import shared.parse.query.ParseQueryEqualHandler;
 import shared.parse.query.ParseQueryIncludeHandler;
 import shared.parse.query.ParseQueryOrderAscHandler;
@@ -26,7 +27,7 @@ import com.parse.ParseQuery;
  * 
  * @param <T>
  */
-public class ParseFacade<T> {
+public class ParseFacade<T> implements DataStoreFacade<T> {
 	Class<T> clazz;
 	Class<?>[] interfaces;
 
@@ -110,6 +111,15 @@ public class ParseFacade<T> {
 		return new Query<T>(this);
 	}
 
+
+	@Override
+	public shared.baas.Query<T> newOrQuery(shared.baas.Query<T>... queries) {
+		Query<T>[] queries_ = new Query[queries.length];
+		
+		System.arraycopy(queries, 0, queries_, 0, queries.length);
+		return newOrQuery(queries_);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -138,7 +148,7 @@ public class ParseFacade<T> {
 		return query;
 	}
 
-	public static class Query<T> {
+	public static class Query<T> implements shared.baas.Query<T> {
 		ParseFacade<T> facade;
 		ParseQuery pq;
 
@@ -208,6 +218,35 @@ public class ParseFacade<T> {
 
 		public ParseQuery parseQuery() {
 			return pq;
+		}
+
+		@Override
+		public void findInBackground(final shared.baas.ListCallback<T> callback) {
+			pq.findInBackground(new FindCallback() {
+				@Override
+				public void done(List<ParseObject> list, ParseException e) {
+					if (e == null) {
+						callback.done(facade.wrap(list));
+					} else {
+						callback.error(e);
+					}
+				}
+			});
+		}
+
+		@Override
+		public void getInBackground(String objectId,
+				final shared.baas.GetCallback<T> callback) {
+			pq.getInBackground(objectId, new GetCallback() {
+				@Override
+				public void done(ParseObject o, ParseException e) {
+					if (e == null)
+						callback.done(facade.wrap(o));
+					else
+						callback.error(e);
+				}
+			});
+
 		}
 	}
 

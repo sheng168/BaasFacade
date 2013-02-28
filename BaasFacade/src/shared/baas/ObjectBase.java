@@ -14,7 +14,7 @@ import java.util.concurrent.Future;
  *
  */
 public interface ObjectBase {
-	static final String PARSE_OBJECT = "parseObject";
+	static final String OBJECT = "objectData";
 	static final String SAVE = "saveAsync";
 	static final String DELETE = "deleteAsync";
 	
@@ -28,13 +28,14 @@ public interface ObjectBase {
 	@Override
 	String toString();
 	
-	String objectId();
-	void objectId(String in);
-	
-	Date createdAt();
-	Date updatedAt();
-	
-	Future<? extends ObjectBase> saveAsync(GetCallback<? extends ObjectBase> getCallback);
-	Future<? extends ObjectBase> deleteAsync(GetCallback<? extends ObjectBase> getCallback);
+	ObjectData objectData();
+//	String objectId();
+//	void objectId(String in);
+//	
+//	Date createdAt();
+//	Date updatedAt();
+//	
+//	Future<? extends ObjectBase> saveAsync(GetCallback<? extends ObjectBase> getCallback);
+//	Future<? extends ObjectBase> deleteAsync(GetCallback<? extends ObjectBase> getCallback);
 
 }

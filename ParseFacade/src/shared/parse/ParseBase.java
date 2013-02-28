@@ -32,5 +32,5 @@ public interface ParseBase extends ObjectBase {
 //	@Override
 //	Date updatedAt();
 	
-	ObjectData objectData();
+//	ObjectData objectData();
 }
