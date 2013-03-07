@@ -7,8 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import shared.baas.DataStoreFacade;
+import shared.baas.ObjectData;
 import shared.parse.query.ParseQueryEqualHandler;
 import shared.parse.query.ParseQueryIncludeHandler;
+import shared.parse.query.ParseQueryNotEqualHandler;
 import shared.parse.query.ParseQueryOrderAscHandler;
 import shared.parse.query.ParseQueryOrderDescHandler;
 
@@ -58,6 +60,7 @@ public class ParseFacade<T> implements DataStoreFacade<T> {
 	 * @see shared.parse.DataStoreFacade#create()
 	 */
 	// @Override
+	@Override
 	public T create() {
 		ParseObject po = new ParseObject(clazz.getSimpleName());
 		return wrap(po);
@@ -71,6 +74,12 @@ public class ParseFacade<T> implements DataStoreFacade<T> {
 		Object obj = Proxy.newProxyInstance(clazz.getClassLoader(), interfaces,
 				new ParseObjectHandler(po));
 		return (T) obj;
+	}
+	
+	@Override
+	public T wrap(ObjectData object) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	public T wrap(String objectId) {
@@ -102,6 +111,7 @@ public class ParseFacade<T> implements DataStoreFacade<T> {
 	 * @see shared.parse.DataStoreFacade#newQuery()
 	 */
 	// @Override
+	@Override
 	public Query<T> newQuery() {
 		// new ParseQuery(RegionUser.class.getSimpleName())
 		// .whereEqualTo("name", name)
@@ -161,6 +171,7 @@ public class ParseFacade<T> implements DataStoreFacade<T> {
 			pq = new ParseQuery(simpleName);
 		}
 
+		@Override
 		@SuppressWarnings("unchecked")
 		public T equalTo() {
 			return (T) Proxy.newProxyInstance(facade.clazz.getClassLoader(),
@@ -168,17 +179,26 @@ public class ParseFacade<T> implements DataStoreFacade<T> {
 		}
 
 		@SuppressWarnings("unchecked")
+		public T notEqualTo() {
+			return (T) Proxy.newProxyInstance(facade.clazz.getClassLoader(),
+					facade.interfaces, new ParseQueryNotEqualHandler(pq));
+		}
+
+		@Override
+		@SuppressWarnings("unchecked")
 		public T orderAsc() {
 			return (T) Proxy.newProxyInstance(facade.clazz.getClassLoader(),
 					facade.interfaces, new ParseQueryOrderAscHandler(pq));
 		}
 
+		@Override
 		@SuppressWarnings("unchecked")
 		public T orderDesc() {
 			return (T) Proxy.newProxyInstance(facade.clazz.getClassLoader(),
 					facade.interfaces, new ParseQueryOrderDescHandler(pq));
 		}
 
+		@Override
 		@SuppressWarnings("unchecked")
 		// cast to T
 		public T include() {
@@ -186,6 +206,7 @@ public class ParseFacade<T> implements DataStoreFacade<T> {
 					facade.interfaces, new ParseQueryIncludeHandler(pq));
 		}
 
+		@Override
 		public List<T> find() throws ParseException {
 			return facade.wrap(pq.find());
 		}
@@ -261,13 +282,16 @@ public class ParseFacade<T> implements DataStoreFacade<T> {
 		public Object invoke(Object proxy, Method m, Object[] args)
 				throws Throwable {
 			// try {
-			String name = m.getName();
-			String key = name; // .substring(3); // assume get set
+			String key = m.getName();
+			
 			if (args.length == 0) {
-				if ("objectData".equals(name))
+				// built-in
+				if ("objectData".equals(key))
 					return new ParseObjectData(obj);
-				if (ParseBase.PARSE_OBJECT.equals(name))
+				if (ParseBase.PARSE_OBJECT.equals(key))
 					return obj;
+				
+				// user define
 				final Class<?> returnType = m.getReturnType();
 				String typeName = returnType.getName();
 				if (typeName.equalsIgnoreCase("float")) {
@@ -288,7 +312,7 @@ public class ParseFacade<T> implements DataStoreFacade<T> {
 						return object;
 					}
 				}
-			} else {
+			} else { // arg.length == 1
 				// set value
 				Object object = args[0];
 				if (key.equals("objectId"))

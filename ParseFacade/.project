@@ -32,6 +32,11 @@
 	</natures>
 	<linkedResources>
 		<link>
+			<name>src.android</name>
+			<type>2</type>
+			<location>/Users/sheng/Dropbox/share/active/ParseFacade/BaasFacade/src.android</location>
+		</link>
+		<link>
 			<name>src.baas</name>
 			<type>2</type>
 			<location>/Users/sheng/Dropbox/share/active/ParseFacade/BaasFacade/src</location>

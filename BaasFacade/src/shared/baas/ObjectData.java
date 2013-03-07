@@ -24,4 +24,7 @@ public interface ObjectData {
 
 //	public abstract void setACL(ParseACL acl);
 
+	public Object get(String key, Class<?> type);
+	public void put(String key, Object value);
+	public abstract FacadeFactory getFactory();
 }

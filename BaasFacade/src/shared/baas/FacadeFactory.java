@@ -1,7 +1,7 @@
 package shared.baas;
 
 
-public interface FacadeFactory {
+public abstract class FacadeFactory {
 
 	/**
 	 * Use this to get instances for related to each class.
@@ -10,5 +10,15 @@ public interface FacadeFactory {
 	 * @return may be a cache or new instance
 	 */
 	public abstract <T> DataStoreFacade<T> get(Class<T> clazz);
+
+	private static FacadeFactory instance;
+	
+	public static FacadeFactory getDefault() {
+		return instance;
+	}
+
+	public static void setDefault(FacadeFactory f) {
+		instance = f;
+	}
 
 }

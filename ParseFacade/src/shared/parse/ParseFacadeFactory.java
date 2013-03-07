@@ -3,7 +3,7 @@ package shared.parse;
 import shared.baas.DataStoreFacade;
 import shared.baas.FacadeFactory;
 
-public class ParseFacadeFactory implements FacadeFactory {
+public class ParseFacadeFactory extends FacadeFactory {
 	/* (non-Javadoc)
 	 * @see shared.parse.FacadeFactory#get(java.lang.Class)
 	 */

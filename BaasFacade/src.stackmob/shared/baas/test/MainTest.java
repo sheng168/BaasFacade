@@ -9,8 +9,8 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import shared.baas.DataStoreFacade;
+import shared.baas.DoCallback;
 import shared.baas.FacadeFactory;
-import shared.baas.GetCallback;
 import shared.baas.ListCallback;
 import shared.baas.Query;
 
@@ -31,11 +31,11 @@ public class MainTest {
 		gs.name("user");
 		gs.score(100);
 		
-		gs.saveAsync(new GetCallback<GameScore>() {
+		gs.objectData().saveInBackground(new DoCallback() {
 			@Override
-			public void done(GameScore o) {
+			public void done() {
 				try {
-					id = o.objectId();
+					id = gs.objectData().getObjectId();
 					System.out.println("saved:"+id);
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
@@ -59,11 +59,11 @@ public class MainTest {
 	public void testDelete() throws InterruptedException {
 		final CountDownLatch latch = new CountDownLatch(1);
 		final GameScore gs = f.create();
-		gs.objectId(id);
+		gs.objectData().setObjectId(id);
 		gs.name("user");
-		gs.deleteAsync(new GetCallback<GameScore>() {
+		gs.objectData().deleteInBackground(new DoCallback() {
 			@Override
-			public void done(GameScore o) {
+			public void done() {
 				System.out.println("deleted:"+id);
 				latch.countDown();
 			}

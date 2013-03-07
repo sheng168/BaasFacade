@@ -1,7 +1,5 @@
 package shared.baas;
 
-import java.util.Date;
-import java.util.concurrent.Future;
 
 
 /**
@@ -15,15 +13,15 @@ import java.util.concurrent.Future;
  */
 public interface ObjectBase {
 	static final String OBJECT = "objectData";
-	static final String SAVE = "saveAsync";
-	static final String DELETE = "deleteAsync";
+//	static final String SAVE = "saveAsync";
+//	static final String DELETE = "deleteAsync";
 	
 	/**
 	 * @deprecated in case of emergency only
 	 * @return the backing object
 	 */
-	@Deprecated
-	Object unwrap();
+//	@Deprecated
+//	Object unwrap();
 	
 	@Override
 	String toString();

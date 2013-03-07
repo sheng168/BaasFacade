@@ -3,6 +3,7 @@ package shared.parse;
 import java.util.Date;
 
 import shared.baas.DoCallback;
+import shared.baas.FacadeFactory;
 import shared.baas.ObjectData;
 
 import com.parse.ParseException;
@@ -109,9 +110,23 @@ public class ParseObjectData implements ObjectData {
 	}
 
 	@Override
-	public void setObjectId(String newObjectId) {
-		
+	public void setObjectId(String newObjectId) {		
 		parse.setObjectId(newObjectId);
+	}
+
+	@Override
+	public Object get(String key, Class<?> type) {
+		return parse.get(key);
+	}
+
+	@Override
+	public void put(String key, Object value) {
+		parse.put(key, value);
+	}
+
+	@Override
+	public FacadeFactory getFactory() {
+		return new ParseFacadeFactory();
 	}
 
 }

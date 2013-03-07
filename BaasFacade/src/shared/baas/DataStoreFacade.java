@@ -13,4 +13,6 @@ public interface DataStoreFacade<T> {
 
 	public Query<T> newOrQuery(Query<T>... queries);
 
+	public T wrap(ObjectData object);
+
 }
