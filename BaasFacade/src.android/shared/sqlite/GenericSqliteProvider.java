@@ -33,7 +33,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.text.TextUtils;
 
 import com.parse.ParseException;
@@ -48,23 +47,27 @@ import com.parse.SaveCallback;
 public abstract class GenericSqliteProvider extends ContentProvider //implements PipeDataWriter<Cursor> 
 {
 	
+	private static final String FIELD_SYNC_DELETE = "sync_delete";
+
+	private static final String FIELD_SYNC_PENDING = "sync_pending";
+
 	private static final String DONE_FIELD = "done";
 
 	private static final String CONTENT_FIELD = "content";
 
 	private static final String _ID = "_id";
 
-	private static final String OBJECT_ID_FIELD = "objectId";
+	private static final String FIELD_OBJECT_ID = "objectId";
 
 	private static final String DELETE_STATE = "delete";
 
-	private static final String CREATED_AT_FIELD = "createdAt";
+	private static final String FIELD_CREATED_AT = "createdAt";
 
-	private static final String UPDATED_AT_FIELD = "updatedAt";
+	private static final String FIELD_UPDATED_AT = "updatedAt";
 
 	private static final String SYNC_STATE = "sync";
 
-	private static final String STATUS_FIELD = "status";
+//	private static final String FIELD_STATUS = "sync_status";
 
 	org.slf4j.Logger log = org.slf4j.LoggerFactory
 			.getLogger(GenericSqliteProvider.class);
@@ -526,6 +529,9 @@ public abstract class GenericSqliteProvider extends ContentProvider //implements
 			values = new ContentValues();
 		}
 
+		values.put(FIELD_SYNC_PENDING, true);
+		values.put(FIELD_SYNC_DELETE, false);
+		
 		// Gets the current system time in milliseconds
 		Long now = Long.valueOf(System.currentTimeMillis());
 
@@ -556,7 +562,7 @@ public abstract class GenericSqliteProvider extends ContentProvider //implements
 		// values.put(NotePad.Notes.COLUMN_NAME_NOTE, "");
 		// }
 
-		values.put(STATUS_FIELD, "insert");
+//		values.put(FIELD_STATUS, "insert");
 		
 		// Opens the database object in "write" mode.
 		final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
@@ -578,36 +584,9 @@ public abstract class GenericSqliteProvider extends ContentProvider //implements
 			// Notifies observers registered against this provider that the data
 			// changed.
 			getContext().getContentResolver().notifyChange(noteUri, null);
-			final List<String> filter = Arrays.asList(GenericSqliteProvider.OBJECT_ID_FIELD, GenericSqliteProvider.CREATED_AT_FIELD, GenericSqliteProvider.UPDATED_AT_FIELD);
-			final ParseObject po = new ParseObject(table);
-			for (Entry<String, Object> entry: values.valueSet()) {
-				if (! filter.contains(entry.getKey()))
-					po.put(entry.getKey(), entry.getValue());
-			}
-//			for (String key: values.keySet()) {
-//				if (! filter.contains(key))
-//					po.put(key, values.get(key));
-//			}
-			po.saveInBackground(new SaveCallback() {
-				@Override
-				public void done(ParseException e) {
-					if (e == null) {
-//						for (String key : po.keySet()) {
-//							values.put(key, po.get(key));
-//						}
-						values.put(GenericSqliteProvider.OBJECT_ID_FIELD, po.getObjectId());
-						values.put(GenericSqliteProvider.CREATED_AT_FIELD, po.getCreatedAt().getTime());
-						values.put(GenericSqliteProvider.UPDATED_AT_FIELD, po.getUpdatedAt().getTime());
-						values.put(STATUS_FIELD, GenericSqliteProvider.SYNC_STATE);
-						
-						db.update(table, values, "_id = "+rowId, null);
-						getContext().getContentResolver().notifyChange(noteUri, null);
-
-					} else {
-						log.error("", e);
-					}
-				}
-			});
+			
+			syncAll(noteUri, table, db);
+//			syncInsert(table, values, db, rowId, noteUri);
 			
 			return noteUri;
 		}
@@ -615,6 +594,40 @@ public abstract class GenericSqliteProvider extends ContentProvider //implements
 		// If the insert didn't succeed, then the rowID is <= 0. Throws an
 		// exception.
 		throw new SQLException("Failed to insert row into " + uri);
+	}
+
+	protected void syncInsert(final String table, final ContentValues values,
+			final SQLiteDatabase db, final long rowId, final Uri noteUri) {
+		final List<String> filter = Arrays.asList(GenericSqliteProvider.FIELD_OBJECT_ID, GenericSqliteProvider.FIELD_CREATED_AT, GenericSqliteProvider.FIELD_UPDATED_AT);
+		final ParseObject po = new ParseObject(table);
+		for (Entry<String, Object> entry: values.valueSet()) {
+			if (! filter.contains(entry.getKey()))
+				po.put(entry.getKey(), entry.getValue());
+		}
+//			for (String key: values.keySet()) {
+//				if (! filter.contains(key))
+//					po.put(key, values.get(key));
+//			}
+		po.saveInBackground(new SaveCallback() {
+			@Override
+			public void done(ParseException e) {
+				if (e == null) {
+//						for (String key : po.keySet()) {
+//							values.put(key, po.get(key));
+//						}
+					values.put(GenericSqliteProvider.FIELD_OBJECT_ID, po.getObjectId());
+					values.put(GenericSqliteProvider.FIELD_CREATED_AT, po.getCreatedAt().getTime());
+					values.put(GenericSqliteProvider.FIELD_UPDATED_AT, po.getUpdatedAt().getTime());
+//					values.put(FIELD_STATUS, GenericSqliteProvider.SYNC_STATE);
+					
+					db.update(table, values, "_id = "+rowId, null);
+					getContext().getContentResolver().notifyChange(noteUri, null);
+
+				} else {
+					log.error("", e);
+				}
+			}
+		});
 	}
 
 	/**
@@ -680,62 +693,20 @@ public abstract class GenericSqliteProvider extends ContentProvider //implements
 			}
 
 			final ContentValues values = new ContentValues();
-			values.put(STATUS_FIELD, GenericSqliteProvider.DELETE_STATE);
+//			values.put(FIELD_STATUS, GenericSqliteProvider.DELETE_STATE);
+			values.put(FIELD_SYNC_PENDING, true);
+			values.put(FIELD_SYNC_DELETE, true);
+			
 			count = db.update(table, values , finalWhere, whereArgs);
 			
 			// send delete to parse
-			final List<String> filter = Arrays.asList(GenericSqliteProvider.OBJECT_ID_FIELD, GenericSqliteProvider.CREATED_AT_FIELD, GenericSqliteProvider.UPDATED_AT_FIELD);
+			final List<String> filter = Arrays.asList(GenericSqliteProvider.FIELD_OBJECT_ID, GenericSqliteProvider.FIELD_CREATED_AT, GenericSqliteProvider.FIELD_UPDATED_AT);
 			final ParseObject po = new ParseObject(table);
-			String objectId = values.getAsString(GenericSqliteProvider.OBJECT_ID_FIELD);
+			String objectId = values.getAsString(GenericSqliteProvider.FIELD_OBJECT_ID);
 			
-			if (objectId == null) {
-				Cursor c = query(uri, null, null, null, null);
-				if (c != null && c.getCount() == 1) {
-					c.moveToPosition(0);
-					objectId = c.getString(c.getColumnIndexOrThrow(GenericSqliteProvider.OBJECT_ID_FIELD));
-				}
-				c.close();
-			}
-
-			if (objectId != null) { 
-				po.setObjectId(objectId);
-			}
-			
-			for (Entry<String, Object> entry: values.valueSet()) {
-				if (! filter.contains(entry.getKey()))
-					po.put(entry.getKey(), entry.getValue());
-			}
-			
-			final String deleteWhere = finalWhere;
-			po.saveInBackground(new SaveCallback() {
-				@Override
-				public void done(ParseException e) {
-					if (e == null) {
-//						for (String key : po.valueSet()) {
-//							values.put(key, po.get(key));
-//						}
-						values.put(GenericSqliteProvider.OBJECT_ID_FIELD, po.getObjectId());
-						try {
-							values.put(GenericSqliteProvider.UPDATED_AT_FIELD, po.getUpdatedAt().getTime());
-//							values.put("createdAt", po.getCreatedAt().getTime()); // null since it's not updated
-						} catch (Exception e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}
-						values.put(STATUS_FIELD, GenericSqliteProvider.SYNC_STATE);
-						
-						// Performs the delete.
-						int count = db.delete(table, // The database table name.
-								deleteWhere, // The final WHERE clause
-								whereArgs // The incoming where clause values.
-								);
-						getContext().getContentResolver().notifyChange(uri, null);
-
-					} else {
-						log.error("", e);
-					}
-				}
-			});			
+//			syncDelete(uri, whereArgs, table, db, finalWhere, values, filter,
+//					po, objectId);			
+			syncAll(uri, table, db);
 			break;
 
 		// If the incoming pattern is invalid, throws an exception.
@@ -755,11 +726,65 @@ public abstract class GenericSqliteProvider extends ContentProvider //implements
 		return count;
 	}
 
+	protected void syncDelete(final Uri uri, final String[] whereArgs,
+			final String table, final SQLiteDatabase db, String finalWhere,
+			final ContentValues values, final List<String> filter,
+			final ParseObject po, String objectId) {
+		if (objectId == null) {
+			Cursor c = query(uri, null, null, null, null);
+			if (c != null && c.getCount() == 1) {
+				c.moveToPosition(0);
+				objectId = c.getString(c.getColumnIndexOrThrow(GenericSqliteProvider.FIELD_OBJECT_ID));
+			}
+			c.close();
+		}
+
+		if (objectId != null) { 
+			po.setObjectId(objectId);
+		}
+		
+		for (Entry<String, Object> entry: values.valueSet()) {
+			if (! filter.contains(entry.getKey()))
+				po.put(entry.getKey(), entry.getValue());
+		}
+		
+		final String deleteWhere = finalWhere;
+		po.saveInBackground(new SaveCallback() {
+			@Override
+			public void done(ParseException e) {
+				if (e == null) {
+//						for (String key : po.valueSet()) {
+//							values.put(key, po.get(key));
+//						}
+					values.put(GenericSqliteProvider.FIELD_OBJECT_ID, po.getObjectId());
+					try {
+						values.put(GenericSqliteProvider.FIELD_UPDATED_AT, po.getUpdatedAt().getTime());
+//							values.put("createdAt", po.getCreatedAt().getTime()); // null since it's not updated
+					} catch (Exception e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+//					values.put(FIELD_STATUS, GenericSqliteProvider.SYNC_STATE);
+					
+					// Performs the delete.
+					int count = db.delete(table, // The database table name.
+							deleteWhere, // The final WHERE clause
+							whereArgs // The incoming where clause values.
+							);
+					getContext().getContentResolver().notifyChange(uri, null);
+
+				} else {
+					log.error("", e);
+				}
+			}
+		});
+	}
+
 	private void copy(ParseObject po, ContentValues v) {
-		v.put(GenericSqliteProvider.OBJECT_ID_FIELD, po.getObjectId());
+		v.put(GenericSqliteProvider.FIELD_OBJECT_ID, po.getObjectId());
 		try {
-			v.put(GenericSqliteProvider.UPDATED_AT_FIELD, po.getUpdatedAt().getTime());
-			v.put(GenericSqliteProvider.CREATED_AT_FIELD, po.getCreatedAt().getTime()); // null since it's not updated
+			v.put(GenericSqliteProvider.FIELD_UPDATED_AT, po.getUpdatedAt().getTime());
+			v.put(GenericSqliteProvider.FIELD_CREATED_AT, po.getCreatedAt().getTime()); // null since it's not updated
 		} catch (Exception e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -829,127 +854,7 @@ public abstract class GenericSqliteProvider extends ContentProvider //implements
 //				qb.appendWhere(inWhere)
 //				db.query(distinct, table, columns, selection, selectionArgs, groupBy, having, orderBy, limit, cancellationSignal)
 				
-				new Thread(new Runnable() {					
-					@Override
-					public void run() {
-						// TODO Auto-generated method stub
-						long syncAt = 0;
-						
-						{
-							String[] selectionArgs = {GenericSqliteProvider.SYNC_STATE};
-							String[] columns = {GenericSqliteProvider.UPDATED_AT_FIELD};
-							final Cursor c = db.query(table, columns , STATUS_FIELD + " = ?", selectionArgs , null, null, GenericSqliteProvider.UPDATED_AT_FIELD + " desc", null);
-							try {
-								if (c.getCount() > 0 && c.moveToPosition(0)) {
-									syncAt = c.getLong(c.getColumnIndexOrThrow(GenericSqliteProvider.UPDATED_AT_FIELD));
-								}
-							} finally {
-								c.close();
-							}
-						}
-						
-						try {
-							final List<ParseObject> serverChanges = new ParseQuery(table).whereGreaterThan(GenericSqliteProvider.UPDATED_AT_FIELD, new Date(syncAt)).find();
-							
-							log.debug("server: {}", serverChanges.size());
-							for (ParseObject po : serverChanges) {
-								// apply to local
-								final String status = po.getString(STATUS_FIELD);
-								log.debug("remote: {}", status);
-								
-								String objectId = po.getObjectId();
-								
-								if (GenericSqliteProvider.DELETE_STATE.equals(status)) {
-									db.delete(table, OBJECT_ID_FIELD +
-											" = ?", new String[]{objectId});
-								} else if (true || "update".equals(status)) {
-//									String content = po.getString("content");
-									
-									ContentValues v = new ContentValues();									
-									copy(po, v);
-									
-									v.put(STATUS_FIELD, GenericSqliteProvider.SYNC_STATE);
-									
-									int update = db.update(table, v, GenericSqliteProvider.OBJECT_ID_FIELD +
-											" = ?", new String[]{objectId});
-									if (update == 0) {
-										long insert = db.insert(table, null, v);
-									}
-								}
-							}
-							
-							{
-								String[] selectionArgs = {GenericSqliteProvider.SYNC_STATE};
-								String[] columns = null;
-								final Cursor c = db.query(table, columns , STATUS_FIELD + " <> ?", 
-										selectionArgs , null, null, 
-										UPDATED_AT_FIELD + " desc", null);
-								try {
-									while (c.moveToNext()) {
-										final long rowId = c.getLong(c.getColumnIndex(GenericSqliteProvider._ID));
-										String status = c.getString(c.getColumnIndexOrThrow(STATUS_FIELD));
-										log.debug("local {} {}", c.getPosition(), status);
-										
-										final List<String> filter = Arrays.asList(GenericSqliteProvider.OBJECT_ID_FIELD, GenericSqliteProvider.CREATED_AT_FIELD, GenericSqliteProvider.UPDATED_AT_FIELD);
-										final ParseObject po = new ParseObject(table);
-										
-										if (GenericSqliteProvider.DELETE_STATE.equals(status)) {
-											po.put(STATUS_FIELD, GenericSqliteProvider.DELETE_STATE);
-										} else {
-											int n = c.getColumnCount();
-//											for (int i = 0; i < n; i++) {
-//												c.get
-//											}
-											
-											po.put(GenericSqliteProvider.CONTENT_FIELD, c.getString(c.getColumnIndexOrThrow(GenericSqliteProvider.CONTENT_FIELD)));
-											po.put(GenericSqliteProvider.DONE_FIELD, c.getInt(c.getColumnIndexOrThrow(GenericSqliteProvider.DONE_FIELD)) != 0);
-											po.put(STATUS_FIELD, status);
-										}
-//										for (Entry<String, Object> entry: values.valueSet()) {
-//											if (! filter.contains(entry.getKey()))
-//												po.put(entry.getKey(), entry.getValue());
-//										}
-//										for (String key: values.keySet()) {
-//											if (! filter.contains(key))
-//												po.put(key, values.get(key));
-//										}
-										try {
-											po.save();
-											ContentValues values = new ContentValues();
-											values.put(GenericSqliteProvider.OBJECT_ID_FIELD, po.getObjectId());
-											values.put(GenericSqliteProvider.CREATED_AT_FIELD, po.getCreatedAt().getTime());
-											values.put(GenericSqliteProvider.UPDATED_AT_FIELD, po.getUpdatedAt().getTime());
-											values.put(STATUS_FIELD, GenericSqliteProvider.SYNC_STATE);
-											
-											db.update(table, values, GenericSqliteProvider._ID +
-													" = "+rowId, null);
-											getContext().getContentResolver().notifyChange(uri, null);
-
-										} catch (Exception e1) {
-											// TODO Auto-generated catch block
-											e1.printStackTrace();
-											log.error("", e1);
-										}
-											
-
-									}
-//									if (c.getCount() > 0 && c.moveToPosition(0)) {
-//										syncAt = c.getLong(c.getColumnIndexOrThrow("updatedAt"));
-//									}
-								} finally {
-									c.close();
-								}
-							}
-
-							getContext().getContentResolver().notifyChange(uri, null);
-						} catch (ParseException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}
-
-					}
-
-				}).start();
+				syncAllManual(uri, table, db);
 				
 				
 				count = 0;
@@ -988,7 +893,9 @@ public abstract class GenericSqliteProvider extends ContentProvider //implements
 				finalWhere = finalWhere + " AND " + where;
 			}
 
-			values.put(STATUS_FIELD, "update");
+//			values.put(FIELD_STATUS, "update");
+			values.put(FIELD_SYNC_PENDING, true);
+			values.put(FIELD_SYNC_DELETE, false);
 			
 			// Does the update and returns the number of rows updated.
 			count = db.update(table, // The database table name.
@@ -999,55 +906,8 @@ public abstract class GenericSqliteProvider extends ContentProvider //implements
 								// null if the values are in the where argument.
 					);
 			
-			final List<String> filter = Arrays.asList(GenericSqliteProvider.OBJECT_ID_FIELD, GenericSqliteProvider.CREATED_AT_FIELD, GenericSqliteProvider.UPDATED_AT_FIELD);
-			final ParseObject po = new ParseObject(table);
-			String objectId = values.getAsString(GenericSqliteProvider.OBJECT_ID_FIELD);
-			
-			if (objectId == null) {
-				Cursor c = query(uri, null, null, null, null);
-				if (c != null && c.getCount() == 1) {
-					c.moveToPosition(0);
-					objectId = c.getString(c.getColumnIndexOrThrow(GenericSqliteProvider.OBJECT_ID_FIELD));
-				}
-				c.close();
-			}
-
-			if (objectId != null) { 
-				po.setObjectId(objectId);
-			}
-			
-			for (Entry<String, Object> entry: values.valueSet()) {
-				if (! filter.contains(entry.getKey()))
-					po.put(entry.getKey(), entry.getValue());
-			}
-			
-			po.saveInBackground(new SaveCallback() {
-				@Override
-				public void done(ParseException e) {
-					if (e == null) {
-//						for (String key : po.valueSet()) {
-//							values.put(key, po.get(key));
-//						}
-						values.put(GenericSqliteProvider.OBJECT_ID_FIELD, po.getObjectId());
-						try {
-							values.put(GenericSqliteProvider.UPDATED_AT_FIELD, po.getUpdatedAt().getTime());
-//							values.put("createdAt", po.getCreatedAt().getTime()); // null since it's not updated
-						} catch (Exception e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}
-						values.put(STATUS_FIELD, GenericSqliteProvider.SYNC_STATE);
-						
-						db.update(table, values, GenericSqliteProvider._ID +
-								" = "+rowId, null);
-						getContext().getContentResolver().notifyChange(uri, null);
-
-					} else {
-						log.error("", e);
-					}
-				}
-			});
-
+//			syncUpdate(uri, values, table, db, rowId);
+			syncAll(uri, table, db);
 			break;
 		// If the incoming pattern is invalid, throws an exception.
 		default:
@@ -1064,6 +924,212 @@ public abstract class GenericSqliteProvider extends ContentProvider //implements
 
 		// Returns the number of rows updated.
 		return count;
+	}
+
+	protected void syncUpdate(final Uri uri, final ContentValues values,
+			final String table, final SQLiteDatabase db, final String rowId) {
+		final List<String> filter = Arrays.asList(GenericSqliteProvider.FIELD_OBJECT_ID, GenericSqliteProvider.FIELD_CREATED_AT, GenericSqliteProvider.FIELD_UPDATED_AT);
+		final ParseObject po = new ParseObject(table);
+		String objectId = values.getAsString(GenericSqliteProvider.FIELD_OBJECT_ID);
+		
+		if (objectId == null) {
+			Cursor c = query(uri, null, null, null, null);
+			if (c != null && c.getCount() == 1) {
+				c.moveToPosition(0);
+				objectId = c.getString(c.getColumnIndexOrThrow(GenericSqliteProvider.FIELD_OBJECT_ID));
+			}
+			c.close();
+		}
+
+		if (objectId != null) { 
+			po.setObjectId(objectId);
+		}
+		
+		for (Entry<String, Object> entry: values.valueSet()) {
+			if (! filter.contains(entry.getKey()))
+				po.put(entry.getKey(), entry.getValue());
+		}
+		
+		po.saveInBackground(new SaveCallback() {
+			@Override
+			public void done(ParseException e) {
+				if (e == null) {
+//						for (String key : po.valueSet()) {
+//							values.put(key, po.get(key));
+//						}
+					values.put(GenericSqliteProvider.FIELD_OBJECT_ID, po.getObjectId());
+					try {
+						values.put(GenericSqliteProvider.FIELD_UPDATED_AT, po.getUpdatedAt().getTime());
+//							values.put("createdAt", po.getCreatedAt().getTime()); // null since it's not updated
+					} catch (Exception e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+//					values.put(FIELD_STATUS, GenericSqliteProvider.SYNC_STATE);
+					
+					db.update(table, values, GenericSqliteProvider._ID +
+							" = "+rowId, null);
+					getContext().getContentResolver().notifyChange(uri, null);
+
+				} else {
+					log.error("", e);
+				}
+			}
+		});
+	}
+
+	
+	protected synchronized void syncAll(final Uri uri, final String table,
+			final SQLiteDatabase db) {
+				
+		syncAllManual(uri, table, db);
+	}
+
+	protected void syncAllManual(final Uri uri, final String table,
+			final SQLiteDatabase db) {
+		new Thread(new Runnable() {					
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				long syncAt = 0;
+				
+				{ // retrieve last sync time
+					String[] selectionArgs = {Boolean.FALSE.toString()};
+					String[] columns = {GenericSqliteProvider.FIELD_UPDATED_AT};
+					final Cursor c = db.query(table, columns , FIELD_SYNC_PENDING + " = 0", null , null, null, GenericSqliteProvider.FIELD_UPDATED_AT + " desc", null);
+					try {
+						if (c.getCount() > 0 && c.moveToPosition(0)) {
+							syncAt = c.getLong(c.getColumnIndexOrThrow(GenericSqliteProvider.FIELD_UPDATED_AT));
+						}
+					} finally {
+						c.close();
+					}
+				}
+				
+				try {
+					// get changes from server
+					final List<ParseObject> serverChanges = new ParseQuery(table)
+					.whereGreaterThan(GenericSqliteProvider.FIELD_UPDATED_AT, new Date(syncAt)).find();
+					
+					log.debug("server: {}", serverChanges.size());
+					for (ParseObject po : serverChanges) {
+						// apply to local
+						final String status = po.getString(FIELD_SYNC_DELETE);
+						log.debug("remote: {}", status);
+						
+						String objectId = po.getObjectId();
+						
+						/*if (GenericSqliteProvider.DELETE_STATE.equals(status)) {
+							final int delete = db.delete(table, OBJECT_ID_FIELD +
+									" = ?", new String[]{objectId}); log.debug("delete {}", delete);
+						} else*/ if (true || "update".equals(status)) {
+//									String content = po.getString("content");
+							
+							ContentValues v = new ContentValues();									
+							copy(po, v);
+							
+//							v.put(FIELD_STATUS, GenericSqliteProvider.SYNC_STATE);
+							v.put(FIELD_SYNC_PENDING, false);
+							
+							int update = db.update(table, v, GenericSqliteProvider.FIELD_OBJECT_ID +
+									" = ? AND 0 = " + FIELD_SYNC_PENDING, new String[]{objectId});
+							if (update == 0) {
+								// there may be a pending local changes
+								ContentValues removeId = new ContentValues();
+								removeId.putNull(FIELD_OBJECT_ID);
+								
+								int move = db.update(table, removeId, GenericSqliteProvider.FIELD_OBJECT_ID +
+										" = ? AND 0 <> " + FIELD_SYNC_PENDING, new String[]{objectId});
+								log.debug("move {}", move);
+								
+								long insert = db.insert(table, null, v);
+								log.debug("inserted {}", insert);
+							} else {
+								log.debug("update {}", update);
+							}
+						}
+					}
+					
+					// get local changes
+					{  
+						String[] selectionArgs = {Boolean.TRUE.toString()};
+						String[] columns = null;
+						final Cursor c = db.query(table, columns , FIELD_SYNC_PENDING + " <> 0", 
+								null , null, null, 
+								FIELD_UPDATED_AT + " desc", null);
+						try {
+							while (c.moveToNext()) {
+								final long rowId = c.getLong(c.getColumnIndex(GenericSqliteProvider._ID));
+//								String status = c.getString(c.getColumnIndexOrThrow(FIELD_STATUS));
+//								log.debug("local {} {}", c.getPosition(), status);
+								
+								final List<String> filter = Arrays.asList(GenericSqliteProvider.FIELD_OBJECT_ID, GenericSqliteProvider.FIELD_CREATED_AT, GenericSqliteProvider.FIELD_UPDATED_AT);
+								final ParseObject po = new ParseObject(table);
+								String objectId = c.getString(c.getColumnIndexOrThrow(GenericSqliteProvider.FIELD_OBJECT_ID));
+								if (objectId != null) {
+									po.setObjectId(objectId);
+								}
+//								if (GenericSqliteProvider.DELETE_STATE.equals(status)) {
+//									po.put(FIELD_STATUS, GenericSqliteProvider.DELETE_STATE);
+//								} else 
+								{
+									int n = c.getColumnCount();
+//											for (int i = 0; i < n; i++) {
+//												c.get
+//											}
+									po.put(GenericSqliteProvider.FIELD_SYNC_DELETE, 0 != c.getInt(c.getColumnIndexOrThrow(GenericSqliteProvider.FIELD_SYNC_DELETE)));
+									po.put(GenericSqliteProvider.CONTENT_FIELD, c.getString(c.getColumnIndexOrThrow(GenericSqliteProvider.CONTENT_FIELD)));
+									po.put(GenericSqliteProvider.DONE_FIELD, c.getInt(c.getColumnIndexOrThrow(GenericSqliteProvider.DONE_FIELD)) != 0);
+//									po.put(FIELD_STATUS, status);
+								}
+//										for (Entry<String, Object> entry: values.valueSet()) {
+//											if (! filter.contains(entry.getKey()))
+//												po.put(entry.getKey(), entry.getValue());
+//										}
+//										for (String key: values.keySet()) {
+//											if (! filter.contains(key))
+//												po.put(key, values.get(key));
+//										}
+								try {
+									po.save();
+									ContentValues values = new ContentValues();
+									values.put(GenericSqliteProvider.FIELD_OBJECT_ID, po.getObjectId());
+									
+									if (po.getCreatedAt() != null)
+										values.put(GenericSqliteProvider.FIELD_CREATED_AT, po.getCreatedAt().getTime());
+									if (po.getUpdatedAt() != null)
+										values.put(GenericSqliteProvider.FIELD_UPDATED_AT, po.getUpdatedAt().getTime());
+//									values.put(FIELD_STATUS, GenericSqliteProvider.SYNC_STATE);
+									values.put(FIELD_SYNC_PENDING, false);
+									db.update(table, values, GenericSqliteProvider._ID +
+											" = "+rowId, null);
+									getContext().getContentResolver().notifyChange(uri, null);
+
+								} catch (Exception e1) {
+									// TODO Auto-generated catch block
+									e1.printStackTrace();
+									log.error("", e1);
+								}
+									
+
+							}
+//									if (c.getCount() > 0 && c.moveToPosition(0)) {
+//										syncAt = c.getLong(c.getColumnIndexOrThrow("updatedAt"));
+//									}
+						} finally {
+							c.close();
+						}
+					}
+
+					getContext().getContentResolver().notifyChange(uri, null);
+				} catch (ParseException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+
+			}
+
+		}).start();
 	}
 
 	/**

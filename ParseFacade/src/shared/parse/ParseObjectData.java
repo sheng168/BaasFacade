@@ -3,14 +3,14 @@ package shared.parse;
 import java.util.Date;
 
 import shared.baas.DoCallback;
-import shared.baas.FacadeFactory;
-import shared.baas.ObjectData;
+import shared.baas.DataFacadeFactory;
+import shared.baas.DataObject;
 
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.SaveCallback;
 
-public class ParseObjectData implements ObjectData {
+public class ParseObjectData implements DataObject {
 	ParseObject parse;
 	
 	public ParseObjectData(ParseObject parse) {
@@ -125,7 +125,7 @@ public class ParseObjectData implements ObjectData {
 	}
 
 	@Override
-	public FacadeFactory getFactory() {
+	public DataFacadeFactory getFactory() {
 		return new ParseFacadeFactory();
 	}
 

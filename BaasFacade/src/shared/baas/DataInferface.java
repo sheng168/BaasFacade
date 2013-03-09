@@ -11,8 +11,8 @@ package shared.baas;
  * @author sheng
  *
  */
-public interface ObjectBase {
-	static final String OBJECT = "objectData";
+public interface DataInferface {
+	static final String OBJECT = "dataObject";
 //	static final String SAVE = "saveAsync";
 //	static final String DELETE = "deleteAsync";
 	
@@ -23,10 +23,11 @@ public interface ObjectBase {
 //	@Deprecated
 //	Object unwrap();
 	
+	@Deprecated
 	@Override
 	String toString();
 	
-	ObjectData objectData();
+	DataObject dataObject();
 //	String objectId();
 //	void objectId(String in);
 //	

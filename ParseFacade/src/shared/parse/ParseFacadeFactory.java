@@ -1,14 +1,14 @@
 package shared.parse;
 
-import shared.baas.DataStoreFacade;
-import shared.baas.FacadeFactory;
+import shared.baas.DataClassFacade;
+import shared.baas.DataFacadeFactory;
 
-public class ParseFacadeFactory extends FacadeFactory {
+public class ParseFacadeFactory extends DataFacadeFactory {
 	/* (non-Javadoc)
 	 * @see shared.parse.FacadeFactory#get(java.lang.Class)
 	 */
 	@Override
-	public <T> DataStoreFacade<T> get(Class<T> clazz) {
-		return (DataStoreFacade<T>) ParseFacade.get(clazz);
+	public <T> DataClassFacade<T> get(Class<T> clazz) {
+		return (DataClassFacade<T>) ParseFacade.get(clazz);
 	}
 }

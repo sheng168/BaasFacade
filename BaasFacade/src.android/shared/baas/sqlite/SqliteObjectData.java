@@ -2,7 +2,7 @@ package shared.baas.sqlite;
 
 
 import shared.baas.DoCallback;
-import shared.baas.FacadeFactory;
+import shared.baas.DataFacadeFactory;
 import shared.baas.impl.AbstractObjectData;
 import android.content.ContentValues;
 import android.net.Uri;
@@ -14,7 +14,7 @@ class SqliteObjectData<T> extends AbstractObjectData<T> {
 //	Uri baseUri;
 	String className;
 
-	private SqliteFacadeFactory factory;
+	private final SqliteFacadeFactory factory;
 	
 	public SqliteObjectData(SqliteFacadeFactory factory, String className) {
 		super();
@@ -26,12 +26,30 @@ class SqliteObjectData<T> extends AbstractObjectData<T> {
 
 	@Override
 	public void put(String key, Object value) {
-		if (value instanceof String)
+		if (value == null)
+			values.putNull(key);
+		else if (value instanceof String)
 			values.put(key, (String) value);
+		
 		else if (value instanceof Boolean)
 			values.put(key, (Boolean)value);
+		
 		else if (value instanceof Long)
 			values.put(key, (Long)value);
+		else if (value instanceof Integer)
+			values.put(key, (Integer)value);
+		else if (value instanceof Short)
+			values.put(key, (Short)value);
+		else if (value instanceof Byte)
+			values.put(key, (Byte)value);
+		
+		else if (value instanceof Double)			
+			values.put(key, (Double)value);		
+		else if (value instanceof Float)
+			values.put(key, (Float)value);
+		
+		else if (value instanceof byte[])
+			values.put(key, (byte[])value);
 		else
 			throw new IllegalArgumentException(key+":"+value);
 	}
@@ -65,7 +83,7 @@ class SqliteObjectData<T> extends AbstractObjectData<T> {
 
 
 	@Override
-	public FacadeFactory getFactory() {
+	public DataFacadeFactory getFactory() {
 		return factory;
 	}
 

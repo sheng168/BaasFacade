@@ -1,7 +1,7 @@
 package shared.parse;
 
-import shared.baas.ObjectBase;
-import shared.baas.ObjectData;
+import shared.baas.DataInferface;
+import shared.baas.DataObject;
 
 import com.parse.ParseObject;
 
@@ -14,7 +14,7 @@ import com.parse.ParseObject;
  * @author sheng
  *
  */
-public interface ParseBase extends ObjectBase {
+public interface ParseBase extends DataInferface {
 	static final String PARSE_OBJECT = "parseObject";
 	
 	/**

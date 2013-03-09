@@ -2,9 +2,9 @@ package shared.baas.impl;
 
 import java.util.Date;
 
-import shared.baas.ObjectData;
+import shared.baas.DataObject;
 
-public abstract class AbstractObjectData<T> implements ObjectData {
+public abstract class AbstractObjectData<T> implements DataObject {
 
 //	public AbstractObjectData() {
 //		super();

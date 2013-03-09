@@ -2,10 +2,10 @@ package shared.baas.impl;
 
 import java.lang.reflect.Proxy;
 
-import shared.baas.DataStoreFacade;
-import shared.baas.ObjectData;
+import shared.baas.DataClassFacade;
+import shared.baas.DataObject;
 
-public abstract class AbstractFacade<T> implements DataStoreFacade<T> {
+public abstract class AbstractDataStoreFacade<T> implements DataClassFacade<T> {
 	protected Class<T> clazz;
 	Class<?>[] interfaces;
 	
@@ -17,7 +17,7 @@ public abstract class AbstractFacade<T> implements DataStoreFacade<T> {
 		return interfaces;
 	}
 
-	public AbstractFacade(Class<T> clazz) {
+	public AbstractDataStoreFacade(Class<T> clazz) {
 		super();
 		assert clazz != null;
 		assert clazz.isInterface();
@@ -29,7 +29,7 @@ public abstract class AbstractFacade<T> implements DataStoreFacade<T> {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public T wrap(ObjectData object) {
+	public T wrap(DataObject object) {
 		assert object != null;
 	
 		Object obj = Proxy.newProxyInstance(clazz.getClassLoader(), interfaces,
@@ -42,5 +42,5 @@ public abstract class AbstractFacade<T> implements DataStoreFacade<T> {
 		return wrap(newObjectData());
 	}
 
-	protected abstract ObjectData newObjectData();
+	protected abstract DataObject newObjectData();
 }

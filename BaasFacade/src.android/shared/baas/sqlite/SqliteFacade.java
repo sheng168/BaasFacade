@@ -1,9 +1,9 @@
 package shared.baas.sqlite;
 
 
-import shared.baas.DataStoreFacade;
-import shared.baas.Query;
-import shared.baas.impl.AbstractFacade;
+import shared.baas.DataClassFacade;
+import shared.baas.DataQuery;
+import shared.baas.impl.AbstractDataStoreFacade;
 
 /**
  * Type safe facade for the parse.com API. Class and field names are defined
@@ -14,7 +14,7 @@ import shared.baas.impl.AbstractFacade;
  * 
  * @param <T>
  */
-public class SqliteFacade<T> extends AbstractFacade<T> implements DataStoreFacade<T> {
+public class SqliteFacade<T> extends AbstractDataStoreFacade<T> implements DataClassFacade<T> {
 
 	SqliteFacadeFactory sqliteFacadeFactory;
 
@@ -28,12 +28,12 @@ public class SqliteFacade<T> extends AbstractFacade<T> implements DataStoreFacad
 	}
 
 	@Override
-	public Query<T> newQuery() {
+	public DataQuery<T> newQuery() {
 		return new SqliteQuery<T>(this);
 	}
 
 	@Override
-	public Query<T> newOrQuery(Query<T>... queries) {
+	public DataQuery<T> newOrQuery(DataQuery<T>... queries) {
 		// TODO Auto-generated method stub
 		return null;
 	}

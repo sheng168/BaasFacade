@@ -6,8 +6,8 @@ import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.List;
 
-import shared.baas.DataStoreFacade;
-import shared.baas.ObjectData;
+import shared.baas.DataClassFacade;
+import shared.baas.DataObject;
 import shared.parse.query.ParseQueryEqualHandler;
 import shared.parse.query.ParseQueryIncludeHandler;
 import shared.parse.query.ParseQueryNotEqualHandler;
@@ -29,7 +29,7 @@ import com.parse.ParseQuery;
  * 
  * @param <T>
  */
-public class ParseFacade<T> implements DataStoreFacade<T> {
+public class ParseFacade<T> implements DataClassFacade<T> {
 	Class<T> clazz;
 	Class<?>[] interfaces;
 
@@ -77,7 +77,7 @@ public class ParseFacade<T> implements DataStoreFacade<T> {
 	}
 	
 	@Override
-	public T wrap(ObjectData object) {
+	public T wrap(DataObject object) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -123,7 +123,7 @@ public class ParseFacade<T> implements DataStoreFacade<T> {
 
 
 	@Override
-	public shared.baas.Query<T> newOrQuery(shared.baas.Query<T>... queries) {
+	public shared.baas.DataQuery<T> newOrQuery(shared.baas.DataQuery<T>... queries) {
 		Query<T>[] queries_ = new Query[queries.length];
 		
 		System.arraycopy(queries, 0, queries_, 0, queries.length);
@@ -158,7 +158,7 @@ public class ParseFacade<T> implements DataStoreFacade<T> {
 		return query;
 	}
 
-	public static class Query<T> implements shared.baas.Query<T> {
+	public static class Query<T> implements shared.baas.DataQuery<T> {
 		ParseFacade<T> facade;
 		ParseQuery pq;
 
@@ -255,7 +255,6 @@ public class ParseFacade<T> implements DataStoreFacade<T> {
 			});
 		}
 
-		@Override
 		public void getInBackground(String objectId,
 				final shared.baas.GetCallback<T> callback) {
 			pq.getInBackground(objectId, new GetCallback() {

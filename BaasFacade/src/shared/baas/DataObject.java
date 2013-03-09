@@ -2,7 +2,7 @@ package shared.baas;
 
 import java.util.Date;
 
-public interface ObjectData {
+public interface DataObject {
 
 //	public abstract ParseACL getACL();
 
@@ -26,5 +26,5 @@ public interface ObjectData {
 
 	public Object get(String key, Class<?> type);
 	public void put(String key, Object value);
-	public abstract FacadeFactory getFactory();
+	public abstract DataFacadeFactory getFactory();
 }

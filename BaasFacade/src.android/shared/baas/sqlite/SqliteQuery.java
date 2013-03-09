@@ -4,15 +4,15 @@ import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.List;
 
+import shared.baas.DataQuery;
 import shared.baas.ListCallback;
-import shared.baas.Query;
 import shared.baas.impl.HandlerOneArg;
 import shared.baas.impl.HandlerZeroArg;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 
-public class SqliteQuery<T> implements Query<T> {
+public class SqliteQuery<T> implements DataQuery<T> {
 	SqliteFacade<T> facade;
 	SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
 	StringBuilder orderBy = new StringBuilder();
@@ -134,7 +134,7 @@ public class SqliteQuery<T> implements Query<T> {
 		
 	}
 
-	@Override
+//	@Override
 	public void getInBackground(String objectId,
 			final shared.baas.GetCallback<T> callback) {
 //		pq.getInBackground(objectId, new GetCallback() {
