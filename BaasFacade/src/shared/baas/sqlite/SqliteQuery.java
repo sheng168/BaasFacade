@@ -110,8 +110,8 @@ public class SqliteQuery<T> implements DataQuery<T> {
 //		});
 //	}
 
-	public void getInBackground(String objectId,
-			final shared.parse.GetCallback<T> callback) {
+//	public void getInBackground(String objectId,
+//			final shared.parse.GetCallback<T> callback) {
 //		pq.getInBackground(objectId, new GetCallback() {
 //			@Override
 //			public void done(ParseObject o, ParseException e) {
@@ -121,7 +121,7 @@ public class SqliteQuery<T> implements DataQuery<T> {
 //					callback.error(e);
 //			}
 //		});
-	}
+//	}
 
 
 	@Override
