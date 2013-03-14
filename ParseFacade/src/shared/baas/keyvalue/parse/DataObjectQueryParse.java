@@ -1,8 +1,10 @@
-package shared.baas.keyvalue;
+package shared.baas.keyvalue.parse;
 
 import java.util.List;
 
 import shared.baas.ListCallback;
+import shared.baas.keyvalue.DataObject;
+import shared.baas.keyvalue.DataObjectQuery;
 
 import com.parse.FindCallback;
 import com.parse.ParseException;

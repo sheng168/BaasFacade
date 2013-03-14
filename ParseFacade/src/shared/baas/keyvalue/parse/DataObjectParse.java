@@ -1,6 +1,7 @@
-package shared.baas.keyvalue;
+package shared.baas.keyvalue.parse;
 
 import shared.baas.DoCallback;
+import shared.baas.keyvalue.DataObject;
 
 import com.parse.DeleteCallback;
 import com.parse.ParseException;
