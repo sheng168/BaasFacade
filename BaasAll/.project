@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>BaasParseFacade</name>
+	<name>BaasAll</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -30,4 +30,11 @@
 		<nature>com.android.ide.eclipse.adt.AndroidNature</nature>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>src_baas</name>
+			<type>2</type>
+			<location>/Users/sheng/Dropbox/share/active/todo/todo-android/sub-projects/parsefacade/BaasFacade/src</location>
+		</link>
+	</linkedResources>
 </projectDescription>
