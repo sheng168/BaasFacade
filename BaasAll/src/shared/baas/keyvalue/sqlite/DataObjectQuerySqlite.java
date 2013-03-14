@@ -1,15 +1,17 @@
-package shared.baas.keyvalue;
+package shared.baas.keyvalue.sqlite;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import shared.baas.ListCallback;
+import shared.baas.keyvalue.DataObject;
+import shared.baas.keyvalue.DataObjectQuery;
 import android.content.ContentResolver;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 
-public class SqliteDataObjectQuery<T> implements DataObjectQuery {
+public class DataObjectQuerySqlite<T> implements DataObjectQuery {
 //	SqliteFacade<T> facade;
 	SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
 	StringBuilder orderBy = new StringBuilder();
@@ -32,7 +34,7 @@ public class SqliteDataObjectQuery<T> implements DataObjectQuery {
 		
 		int last = Math.max(c.getCount(), skip+count);
 		for (int i = skip; i < last; i++) {
-			list.add(new SqliteDataObject());
+			list.add(new DataObjectSqlite());
 		}
 		return list;
 	}

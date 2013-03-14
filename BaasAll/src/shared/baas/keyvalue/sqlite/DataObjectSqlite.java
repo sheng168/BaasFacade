@@ -1,27 +1,20 @@
-package shared.baas.keyvalue;
+package shared.baas.keyvalue.sqlite;
 
 
 import shared.baas.DoCallback;
+import shared.baas.keyvalue.DataObject;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.net.Uri;
 
-public class SqliteDataObject implements DataObject {
+public class DataObjectSqlite implements DataObject {
 	final ContentValues values = new ContentValues();
 	
 	ContentResolver cr;
 	Uri baseUri;
 	String className;
 
-//	private final SqliteFacadeFactory factory;
-	
-//	public SqliteObjectData(SqliteFacadeFactory factory, String className) {
-//		super();
-////		this.ctx = ctx;
-////		this.baseUri = baseUri;
-//		this.factory = factory;
-//		this.className = className;
-//	}
+
 
 	@Override
 	public void put(String key, Object value) {
