@@ -3,9 +3,9 @@ package shared.baas.keyvalue.sqlite;
 import java.util.ArrayList;
 import java.util.List;
 
-import shared.baas.ListCallback;
 import shared.baas.keyvalue.DataObject;
 import shared.baas.keyvalue.DataObjectQuery;
+import shared.baas.keyvalue.ListenableFuture;
 import android.content.ContentResolver;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteQueryBuilder;
@@ -22,7 +22,8 @@ public class DataObjectQuerySqlite<T> implements DataObjectQuery {
 	private Uri baseUri;
 
 
-	public List<DataObject> find() throws Exception {
+	@Override
+	public ListenableFuture<List<DataObject>> find() {
 		Uri uri = Uri.withAppendedPath(baseUri, className);
 		
 		String sortOrder = orderBy.length() == 0 ? null : orderBy.toString();
@@ -36,7 +37,7 @@ public class DataObjectQuerySqlite<T> implements DataObjectQuery {
 		for (int i = skip; i < last; i++) {
 			list.add(new DataObjectSqlite());
 		}
-		return list;
+		return null;
 	}
 
 	@Override
@@ -49,18 +50,19 @@ public class DataObjectQuerySqlite<T> implements DataObjectQuery {
 		qb.appendWhere(key + " <> ?");
 	}
 
-	@Override
-	public void findInBackground(ListCallback<DataObject> callback) {
-		try {
-			callback.done(find());
-		} catch (Exception e) {
-			callback.equals(e);
-		}
-	}
+//	@Override
+//	public void findInBackground(ListCallback<DataObject> callback) {
+//		try {
+//			callback.done(find());
+//		} catch (Exception e) {
+//			callback.equals(e);
+//		}
+//	}
 
 	@Override
-	public void whereGreaterThan(String key, Object value) {
+	public DataObjectQuery whereGreaterThan(String key, Object value) {
 		qb.appendWhere(key + " > ?");
+		return this;
 	}
 
 	@Override

@@ -1,6 +1,7 @@
 package shared.baas.keyvalue;
 
-import shared.baas.ListCallback;
+import java.util.List;
+
 
 
 public interface DataObjectQuery {
@@ -9,14 +10,16 @@ public interface DataObjectQuery {
 
 	void whereNotEqualTo(String key, Object value);
 
-	void findInBackground(ListCallback<DataObject> callback);
-
-	void whereGreaterThan(String key, Object value);
+	DataObjectQuery whereGreaterThan(String key, Object value);
 
 	void orderByAsc(String key);
 
 	void orderByDesc(String key);
 
 	void isInRange(int skip, int count);
+
+	ListenableFuture<List<DataObject>> find();
+
+//	void findInBackground(ListCallback<DataObject> callback);
 
 }

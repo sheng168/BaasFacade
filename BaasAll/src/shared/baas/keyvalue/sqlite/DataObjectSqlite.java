@@ -1,8 +1,13 @@
 package shared.baas.keyvalue.sqlite;
 
 
+import java.util.HashSet;
+import java.util.Map.Entry;
+import java.util.Set;
+
 import shared.baas.DoCallback;
 import shared.baas.keyvalue.DataObject;
+import shared.baas.keyvalue.ListenableFuture;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.net.Uri;
@@ -46,17 +51,18 @@ public class DataObjectSqlite implements DataObject {
 			throw new IllegalArgumentException(key+":"+value);
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
-	public Object get(String key, Class<?> type) {
-		return values.get(key);
+	public <T> T get(String key, Class<T> type) {
+		return (T) values.get(key);
 	}
 
 	@Override
-	public void saveInBackground(DoCallback callback) {		
+	public ListenableFuture<String> save() {		
 		Uri url = Uri.withAppendedPath(baseUri, className);
 		cr.insert(url, values);
 		
-		callback.done(null);
+		return null;
 	}
 
 	@Override
@@ -71,5 +77,14 @@ public class DataObjectSqlite implements DataObject {
 	@Override
 	public void refreshInBackground(DoCallback callback) {
 		callback.done(new UnsupportedOperationException());
+	}
+
+	@Override
+	public Set<String> keySet() {
+		final HashSet<String> hashSet = new HashSet<String>();
+		for (Entry<String, Object> f : values.valueSet()) {
+			hashSet.add(f.getKey());
+		}
+		return hashSet;
 	}
 }

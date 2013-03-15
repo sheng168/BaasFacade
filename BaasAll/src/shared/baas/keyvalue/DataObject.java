@@ -1,8 +1,14 @@
 package shared.baas.keyvalue;
 
+import java.util.Set;
+
 import shared.baas.DoCallback;
 
 public interface DataObject {
+	public Set<String> keySet();
+	
+	public <T> T get(String key, Class<T> type);
+	public void put(String key, Object value);
 
 //	public abstract ParseACL getACL();
 
@@ -18,13 +24,11 @@ public interface DataObject {
 
 	public abstract void refreshInBackground(DoCallback callback);
 
-	public abstract void saveInBackground(DoCallback callback);
+	public ListenableFuture<String> save();
 
 	public abstract void deleteInBackground(DoCallback callback);
 
 //	public abstract void setACL(ParseACL acl);
 
-	public Object get(String key, Class<?> type);
-	public void put(String key, Object value);
 //	public abstract DataFacadeFactory getFactory();
 }
