@@ -7,6 +7,7 @@ import java.util.Set;
 import shared.baas.DoCallback;
 import shared.baas.keyvalue.DataObject;
 import shared.baas.keyvalue.ListenableFuture;
+import shared.baas.keyvalue.ListenableFuture.Basic;
 
 import com.stackmob.sdk.api.StackMob;
 import com.stackmob.sdk.api.StackMobDatastore;
@@ -44,25 +45,29 @@ public class DataObjectSM implements DataObject {
 	}
 
 	@Override
-	public ListenableFuture<String> save() {
-//		final StackMobCallback stackMobCallback = new StackMobCallback() {
-//			@Override
-//			public void success(String responseBody) {
-//				callback.done();
-//			}
-//
-//			@Override
-//			public void failure(StackMobException e) {
-//				callback.error(e);
-//			}
-//		};
+	public ListenableFuture<String> save() {		
+		final Basic<String> future = new ListenableFuture.Basic<String>();
+
+		final StackMobCallback stackMobCallback = new StackMobCallback() {
+			@Override
+			public void success(String responseBody) {
+				future.set(responseBody, null);
+			}
+
+			@Override
+			public void failure(StackMobException e) {
+				future.set(null, e);
+			}
+		};
 		
-//		if (getId() == null) {
-//			dataStore().post(className, obj, stackMobCallback);
-//		} else {
-//			dataStore().put(className, getId(), obj, stackMobCallback);
-//		}
-		return null;
+		final String id = getId();
+		if (id == null) {
+			dataStore().post(className, obj, stackMobCallback);
+		} else {
+			dataStore().put(className, id, obj, stackMobCallback);
+		}
+		
+		return future;
 	}
 
 	@Override
@@ -92,7 +97,8 @@ public class DataObjectSM implements DataObject {
 	}
 
 	String getId() {
-		return (String) obj.get(id_key());
+		final String id_key = id_key();
+		return (String) obj.get(id_key);
 	}
 
 	protected String id_key() {

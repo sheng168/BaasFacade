@@ -29,19 +29,19 @@ public class DataObjectParse implements DataObject {
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T get(String key, Class<T> type) {
-		if ("objectId".equals(key))
+		if (OBJECT_ID.equals(key))
 			return (T) obj.getObjectId();
-		else if ("updatedAt".equals(key))
-			return (T) obj.getUpdatedAt();		
-		else if ("createdAt".equals(key))
-			return (T) obj.getCreatedAt();
+		else if (UPDATED_AT.equals(key))
+			return obj.getUpdatedAt() == null?null:(T) Long.valueOf(obj.getUpdatedAt().getTime());		
+		else if (CREATED_AT.equals(key))
+			return obj.getCreatedAt() == null?null:(T) Long.valueOf(obj.getCreatedAt().getTime());
 		else
 			return (T) obj.get(key);
 	}
 
 	@Override
 	public void put(String key, Object value) {
-		if ("objectId".equals(key))
+		if (OBJECT_ID.equals(key))
 			obj.setObjectId((String) value);
 		else
 			obj.put(key, value); //TODO reject updatedAt here?

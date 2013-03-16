@@ -5,6 +5,10 @@ import java.util.Set;
 import shared.baas.DoCallback;
 
 public interface DataObject {
+	public static final String OBJECT_ID = "objectId"; // String
+	public static final String CREATED_AT = "createddate"; // Long
+	public static final String UPDATED_AT = "lastmoddate"; // Long
+
 	public Set<String> keySet();
 	
 	public <T> T get(String key, Class<T> type);

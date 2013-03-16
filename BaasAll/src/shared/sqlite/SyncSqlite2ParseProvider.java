@@ -16,17 +16,18 @@
 
 package shared.sqlite;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
 
 import shared.baas.keyvalue.DataObject;
 import shared.baas.keyvalue.DataObjectFactory;
-import shared.baas.keyvalue.parse.DataObjectFactoryParse;
+import shared.baas.keyvalue.DataObjectQuery;
+import shared.baas.keyvalue.stackmob.DataObjectFactorySM;
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -64,7 +65,7 @@ public abstract class SyncSqlite2ParseProvider extends ContentProvider //impleme
 
 	private static final String _ID = "_id";
 
-	private static final String FIELD_OBJECT_ID = "objectId";
+	private static final String FIELD_OBJECT_ID = DataObject.OBJECT_ID;
 
 	private static final String DELETE_STATE = "delete";
 
@@ -788,10 +789,10 @@ public abstract class SyncSqlite2ParseProvider extends ContentProvider //impleme
 	}
 
 	private void copy(DataObject po, ContentValues v) {
-		v.put(SyncSqlite2ParseProvider.FIELD_OBJECT_ID, po.get("objectId", String.class));
+		v.put(SyncSqlite2ParseProvider.FIELD_OBJECT_ID, po.get(DataObject.OBJECT_ID, String.class));
 		try {
-			v.put(SyncSqlite2ParseProvider.FIELD_UPDATED_AT, po.get("updatedAt", Date.class).getTime());
-			v.put(SyncSqlite2ParseProvider.FIELD_CREATED_AT, po.get("createdAt", Date.class).getTime()); // null since it's not updated
+			v.put(SyncSqlite2ParseProvider.FIELD_UPDATED_AT, po.get(DataObject.UPDATED_AT, Long.class));
+			v.put(SyncSqlite2ParseProvider.FIELD_CREATED_AT, po.get(DataObject.CREATED_AT, Long.class)); // null since it's not updated
 		} catch (Exception e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -1025,10 +1026,24 @@ public abstract class SyncSqlite2ParseProvider extends ContentProvider //impleme
 //					final List<ParseObject> serverChanges = new ParseQuery(table)
 //					.whereGreaterThan(SyncSqlite2ParseProvider.FIELD_UPDATED_AT, new Date(syncAt)).find();
 
-					final DataObjectFactory factory = new DataObjectFactoryParse();
+					// TODO decide what to use
+					final DataObjectFactory factory = 
+							new DataObjectFactorySM();
+//							new DataObjectFactoryParse();
 					
-					final List<DataObject> serverChanges = factory.createDataObjectQuery(table)
-						.whereGreaterThan(SyncSqlite2ParseProvider.FIELD_UPDATED_AT, new Date(syncAt)).find().get();
+					final DataObjectQuery query = factory.createDataObjectQuery(table);
+					final DataObjectQuery whereGreaterThan = query
+						.whereGreaterThan(DataObject.UPDATED_AT, new Date(syncAt));
+					
+					List<DataObject> serverChanges;
+					
+					try {
+						serverChanges = whereGreaterThan.find().get();
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+						serverChanges = new ArrayList<DataObject>();
+					}
 					
 					log.debug("server: {}", serverChanges.size());
 					for (DataObject po : serverChanges) {
@@ -1036,7 +1051,7 @@ public abstract class SyncSqlite2ParseProvider extends ContentProvider //impleme
 						final Boolean status = po.get(FIELD_SYNC_DELETE, Boolean.class);
 						log.debug("remote: {}", status);
 						
-						String objectId = po.get("objectId", String.class);
+						String objectId = po.get(DataObject.OBJECT_ID, String.class);
 						
 						/*if (GenericSqliteProvider.DELETE_STATE.equals(status)) {
 							final int delete = db.delete(table, OBJECT_ID_FIELD +
@@ -1088,7 +1103,7 @@ public abstract class SyncSqlite2ParseProvider extends ContentProvider //impleme
 								
 								String objectId = c.getString(c.getColumnIndexOrThrow(SyncSqlite2ParseProvider.FIELD_OBJECT_ID));
 								if (objectId != null) {
-									po.put("objectId", objectId);
+									po.put(DataObject.OBJECT_ID, objectId);
 								}
 //								if (GenericSqliteProvider.DELETE_STATE.equals(status)) {
 //									po.put(FIELD_STATUS, GenericSqliteProvider.DELETE_STATE);
@@ -1113,17 +1128,17 @@ public abstract class SyncSqlite2ParseProvider extends ContentProvider //impleme
 //										}
 								try {
 									String id = po.save().get();
-									log.debug("{}", id);
+									log.debug("id:{}", id);
 									
 									ContentValues values = new ContentValues();
-									values.put(SyncSqlite2ParseProvider.FIELD_OBJECT_ID, po.get("objectId", String.class));
+									values.put(SyncSqlite2ParseProvider.FIELD_OBJECT_ID, po.get(DataObject.OBJECT_ID, String.class));
 									
-									final Date created = po.get("createdAt", Date.class);
+									final Long created = po.get(DataObject.CREATED_AT, Long.class);
 									if (created != null)
-										values.put(SyncSqlite2ParseProvider.FIELD_CREATED_AT, created.getTime());
-									final Date updated = po.get("updatedAt", Date.class);
+										values.put(SyncSqlite2ParseProvider.FIELD_CREATED_AT, created);
+									final Long updated = po.get(DataObject.UPDATED_AT, Long.class);
 									if (updated != null)
-										values.put(SyncSqlite2ParseProvider.FIELD_UPDATED_AT, updated.getTime());
+										values.put(SyncSqlite2ParseProvider.FIELD_UPDATED_AT, updated);
 //									values.put(FIELD_STATUS, GenericSqliteProvider.SYNC_STATE);
 									values.put(FIELD_SYNC_PENDING, false);
 									final int update = db.update(table, values, SyncSqlite2ParseProvider._ID +
@@ -1150,12 +1165,12 @@ public abstract class SyncSqlite2ParseProvider extends ContentProvider //impleme
 //				} catch (ParseException e1) {
 //					// TODO Auto-generated catch block
 //					e1.printStackTrace();
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (ExecutionException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+//				} catch (InterruptedException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				} catch (ExecutionException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
 				} finally {
 					syncing = false;
 				}
