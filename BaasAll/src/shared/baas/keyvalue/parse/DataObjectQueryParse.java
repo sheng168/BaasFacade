@@ -19,8 +19,7 @@ public class DataObjectQueryParse implements DataObjectQuery {
 
 	public DataObjectQueryParse(String className) {
 		super();
-		this.query = new ParseQuery(className);
-		
+		this.query = new ParseQuery(className);		
 	}
 
 	// equality

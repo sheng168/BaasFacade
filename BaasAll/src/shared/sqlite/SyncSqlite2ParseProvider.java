@@ -25,8 +25,8 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 import shared.baas.keyvalue.DataObject;
-import shared.baas.keyvalue.parse.DataObjectParse;
-import shared.baas.keyvalue.parse.DataObjectQueryParse;
+import shared.baas.keyvalue.DataObjectFactory;
+import shared.baas.keyvalue.parse.DataObjectFactoryParse;
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -42,6 +42,8 @@ import android.text.TextUtils;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.SaveCallback;
+//import shared.baas.keyvalue.parse.DataObjectParse;
+//import shared.baas.keyvalue.parse.DataObjectQueryParse;
 //import shared.baas.keyvalue.DataObject;
 //import shared.baas.keyvalue.parse.DataObjectQueryParse;
 
@@ -1023,7 +1025,9 @@ public abstract class SyncSqlite2ParseProvider extends ContentProvider //impleme
 //					final List<ParseObject> serverChanges = new ParseQuery(table)
 //					.whereGreaterThan(SyncSqlite2ParseProvider.FIELD_UPDATED_AT, new Date(syncAt)).find();
 
-					final List<DataObject> serverChanges = new DataObjectQueryParse(table)
+					final DataObjectFactory factory = new DataObjectFactoryParse();
+					
+					final List<DataObject> serverChanges = factory.createDataObjectQuery(table)
 						.whereGreaterThan(SyncSqlite2ParseProvider.FIELD_UPDATED_AT, new Date(syncAt)).find().get();
 					
 					log.debug("server: {}", serverChanges.size());
@@ -1080,7 +1084,7 @@ public abstract class SyncSqlite2ParseProvider extends ContentProvider //impleme
 								
 								final List<String> filter = Arrays.asList(SyncSqlite2ParseProvider.FIELD_OBJECT_ID, SyncSqlite2ParseProvider.FIELD_CREATED_AT, SyncSqlite2ParseProvider.FIELD_UPDATED_AT);
 //								final ParseObject po = new ParseObject(table);
-								DataObject po = new DataObjectParse(table);
+								DataObject po = factory.createDataObject(table);
 								
 								String objectId = c.getString(c.getColumnIndexOrThrow(SyncSqlite2ParseProvider.FIELD_OBJECT_ID));
 								if (objectId != null) {

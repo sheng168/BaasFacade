@@ -44,7 +44,7 @@ public class DataObjectParse implements DataObject {
 		if ("objectId".equals(key))
 			obj.setObjectId((String) value);
 		else
-			obj.put(key, value); //TODO
+			obj.put(key, value); //TODO reject updatedAt here?
 	}
 
 	@Override
