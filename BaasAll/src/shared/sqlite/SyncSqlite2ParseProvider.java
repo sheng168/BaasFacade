@@ -18,7 +18,6 @@ package shared.sqlite;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
@@ -807,6 +806,10 @@ public abstract class SyncSqlite2ParseProvider extends ContentProvider //impleme
 				v.put(key, (Boolean)value);
 			} else if (value instanceof Long) {
 				v.put(key, (Long)value);
+			} else if (value instanceof Double) {
+				v.put(key, (Double)value);
+			} else {
+				log.warn("unsupported type {} {}", value, value.getClass());
 			}
 		}
 	}
@@ -1033,7 +1036,7 @@ public abstract class SyncSqlite2ParseProvider extends ContentProvider //impleme
 					
 					final DataObjectQuery query = factory.createDataObjectQuery(table);
 					final DataObjectQuery whereGreaterThan = query
-						.whereGreaterThan(DataObject.UPDATED_AT, new Date(syncAt));
+						.whereGreaterThan(DataObject.UPDATED_AT, syncAt);
 					
 					List<DataObject> serverChanges;
 					
@@ -1060,8 +1063,11 @@ public abstract class SyncSqlite2ParseProvider extends ContentProvider //impleme
 //									String content = po.getString("content");
 							
 							ContentValues v = new ContentValues();									
-							copy(po, v);
-							
+//							copy(po, v);
+							v.put(SyncSqlite2ParseProvider.FIELD_SYNC_DELETE, po.get(FIELD_SYNC_DELETE, Boolean.class));
+							v.put(SyncSqlite2ParseProvider.CONTENT_FIELD, po.get(CONTENT_FIELD, String.class));
+							v.put(SyncSqlite2ParseProvider.DONE_FIELD, po.get(DONE_FIELD, Boolean.class));
+
 //							v.put(FIELD_STATUS, GenericSqliteProvider.SYNC_STATE);
 							v.put(FIELD_SYNC_PENDING, false);
 							

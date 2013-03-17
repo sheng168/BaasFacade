@@ -2,6 +2,7 @@ package shared.baas.keyvalue.stackmob;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import shared.baas.ListCallback;
 import shared.baas.keyvalue.DataObject;
@@ -10,6 +11,10 @@ import shared.baas.keyvalue.ListenableFuture;
 import shared.baas.keyvalue.ListenableFuture.Basic;
 import shared.baas.keyvalue.parse.DataObjectParse;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import com.parse.ParseObject;
 import com.stackmob.sdk.api.StackMob;
 import com.stackmob.sdk.api.StackMobDatastore;
@@ -91,7 +96,16 @@ public class DataObjectQuerySM implements DataObjectQuery {
 			@Override
 			public void success(String responseBody) {
 				// TODO parse responseBody
-				future.set(new ArrayList<DataObject>(), null);
+				final JsonElement json = new JsonParser().parse(responseBody);
+				GsonBuilder gsonBuilder = new GsonBuilder();
+		        final Gson gson = gsonBuilder.create();
+				final List<Map<String, Object>> list = gson.fromJson(json, List.class);
+		        
+				final ArrayList<DataObject> result = new ArrayList<DataObject>();
+				for (Map<String, Object> map : list) {
+					result.add(new DataObjectSM(className, map));
+				}
+				future.set(result, null);
 			}
 			
 			@Override
