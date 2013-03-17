@@ -1,6 +1,6 @@
 package shared.baas.test;
 
-import shared.baas.DataInferface;
+import shared.baas.DataInterface;
 
 
 /**
@@ -12,7 +12,7 @@ import shared.baas.DataInferface;
  * @author sheng
  *
  */
-public interface GameScore extends DataInferface {
+public interface GameScore extends DataInterface {
 	String name();
 	void name(String in);
 

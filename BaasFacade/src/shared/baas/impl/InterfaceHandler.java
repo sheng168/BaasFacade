@@ -4,7 +4,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 
 import shared.baas.DataFacadeFactory;
-import shared.baas.DataInferface;
+import shared.baas.DataInterface;
 import shared.baas.DataObject;
 //import shared.parse.ParseBase;
 //import shared.parse.ParseFacade;
@@ -25,7 +25,7 @@ public class InterfaceHandler implements InvocationHandler {
 		
 		if (args.length == 0) {
 			// built-in
-			if (DataInferface.OBJECT.equals(key))
+			if (DataInterface.OBJECT.equals(key))
 				return obj;
 			if ("toString".equals(key))
 				return obj.toString();
@@ -43,7 +43,7 @@ public class InterfaceHandler implements InvocationHandler {
 					return 0;
 				} else if (object != null
 						&& DataObject.class.isInstance(object)
-						&& DataInferface.class.isAssignableFrom(returnType)) {
+						&& DataInterface.class.isAssignableFrom(returnType)) {
 					DataFacadeFactory factory = obj.getFactory();					
 					return (factory.get(returnType))
 							.wrap((DataObject) object);
@@ -60,8 +60,8 @@ public class InterfaceHandler implements InvocationHandler {
 //			if (key.equals("objectId"))
 //				System.out.println("value " + object);
 
-			if (object instanceof DataInferface) {
-				obj.put(key, ((DataInferface) object).dataObject());
+			if (object instanceof DataInterface) {
+				obj.put(key, ((DataInterface) object).dataObject());
 			} else {
 				obj.put(key, object);
 			}

@@ -3,7 +3,7 @@ package shared.baas.test;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 
-import shared.baas.DataInferface;
+import shared.baas.DataInterface;
 
 class StackMobHandler implements InvocationHandler {
 	StackMobFacade.SMObject obj;
@@ -19,7 +19,7 @@ class StackMobHandler implements InvocationHandler {
 		String name = m.getName();
 		String key = name; // .substring(3); // assume get set
 		if (args == null || args.length == 0) {
-			if (DataInferface.OBJECT.equals(name))
+			if (DataInterface.OBJECT.equals(name))
 				return obj;
 			if ("toString".equals(name)) {
 				return obj.toString();
@@ -38,7 +38,7 @@ class StackMobHandler implements InvocationHandler {
 					return 0;
 				} else if (object != null
 						&& StackMobFacade.SMObject.class.isInstance(object)
-						&& DataInferface.class.isAssignableFrom(returnType)) {
+						&& DataInterface.class.isAssignableFrom(returnType)) {
 					return ((StackMobFacade<?>) StackMobFacade.get(returnType))
 							.wrap((StackMobFacade.SMObject) object);
 				} else if (object != null && !returnType.isInstance(object)
@@ -105,7 +105,7 @@ class StackMobHandler implements InvocationHandler {
 				obj.id = (String) object;
 			}
 
-			if (object instanceof DataInferface) {
+			if (object instanceof DataInterface) {
 				put(obj, key, (object));
 			} else {
 				put(obj, key, object);
@@ -125,7 +125,7 @@ class StackMobHandler implements InvocationHandler {
 		obj.put(key, object);
 	}
 
-	private void put(Object obj2, String key, DataInferface objectBase) {
+	private void put(Object obj2, String key, DataInterface objectBase) {
 		System.out.println(key + "=" + objectBase);
 	}
 

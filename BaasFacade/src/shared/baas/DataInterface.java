@@ -11,7 +11,7 @@ package shared.baas;
  * @author sheng
  *
  */
-public interface DataInferface {
+public interface DataInterface {
 	static final String OBJECT = "dataObject";
 //	static final String SAVE = "saveAsync";
 //	static final String DELETE = "deleteAsync";
