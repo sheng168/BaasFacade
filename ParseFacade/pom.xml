@@ -6,10 +6,10 @@
 >
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>us.jsy.shared.baas</groupId>
-	<artifactId>BaasFacade</artifactId>
+	<artifactId>ParseFacade</artifactId>
 	<version>1.0-SNAPSHOT</version>
-	<packaging>jar</packaging>
-	<name>BaasFacade</name>
+	<packaging>apk</packaging>
+	<name>ParseFacade</name>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -25,11 +25,21 @@
 
 	<dependencies>
 	    <dependency>
+			<groupId>us.jsy.shared.baas</groupId>
+			<artifactId>BaasFacade</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
+	    <dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-android</artifactId>
 			<version>1.6.1-RC1</version>
 		</dependency>
-		<dependency>
+	    <dependency>
+			<groupId>com.parse</groupId>
+			<artifactId>Parse</artifactId>
+			<version>1.1.15</version>
+		</dependency>
+	    		<dependency>
 			<groupId>com.google.android</groupId>
 			<artifactId>android</artifactId>
 			<scope>provided</scope>
@@ -37,6 +47,16 @@
 		</dependency>
 	</dependencies>
 
+	<!-- In Project repository -->
+	<repositories>
+	    <repository>
+			<id>in-project</id>
+			<name>In Project Repo</name>
+			<url>file://${project.basedir}/repo</url>
+		</repository>
+	    
+	</repositories>
+	
 	<build>
 	    <sourceDirectory>src</sourceDirectory>
 	    <plugins>

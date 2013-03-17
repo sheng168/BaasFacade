@@ -21,6 +21,7 @@
 
 	<modules>
 		<module>BaasFacade</module>
+		<module>ParseFacade</module>
 	</modules>
 
 	<scm>
