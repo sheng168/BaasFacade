@@ -8,15 +8,14 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import shared.baas.DataStoreFacade;
+import shared.baas.DataClassFacade;
+import shared.baas.DataQuery;
 import shared.baas.DoCallback;
-import shared.baas.FacadeFactory;
 import shared.baas.ListCallback;
-import shared.baas.Query;
 
 public class MainTest {
-	FacadeFactory ff = new StackMobFacadeFactory("37c7ebb3-b6c8-43c7-9bfa-79a5ed82fecc", "c19eae0d-993e-49c7-a430-a30643dff36c");
-	final DataStoreFacade<GameScore> f = ff.get(GameScore.class);
+	StackMobFacadeFactory ff = new StackMobFacadeFactory("37c7ebb3-b6c8-43c7-9bfa-79a5ed82fecc", "c19eae0d-993e-49c7-a430-a30643dff36c");
+	final DataClassFacade<GameScore> f = ff.get(GameScore.class);
 	static String id = "";
 	
 	@Before
@@ -31,11 +30,11 @@ public class MainTest {
 		gs.name("user");
 		gs.score(100);
 		
-		gs.objectData().saveInBackground(new DoCallback() {
+		gs.dataObject().saveInBackground(new DoCallback() {
 			@Override
 			public void done() {
 				try {
-					id = gs.objectData().getObjectId();
+					id = gs.dataObject().getObjectId();
 					System.out.println("saved:"+id);
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
@@ -59,9 +58,9 @@ public class MainTest {
 	public void testDelete() throws InterruptedException {
 		final CountDownLatch latch = new CountDownLatch(1);
 		final GameScore gs = f.create();
-		gs.objectData().setObjectId(id);
+		gs.dataObject().setObjectId(id);
 		gs.name("user");
-		gs.objectData().deleteInBackground(new DoCallback() {
+		gs.dataObject().deleteInBackground(new DoCallback() {
 			@Override
 			public void done() {
 				System.out.println("deleted:"+id);
@@ -80,7 +79,7 @@ public class MainTest {
 	@Ignore
 	@Test
 	public void testQuery() {
-		final Query<GameScore> query = f.newQuery();
+		final DataQuery<GameScore> query = f.newQuery();
 		query.equalTo().name("user");
 		query.orderAsc().score();
 		query.include().name();

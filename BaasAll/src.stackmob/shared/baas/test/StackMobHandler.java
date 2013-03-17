@@ -2,16 +2,8 @@ package shared.baas.test;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.util.Date;
 
-import shared.baas.GetCallback;
-import shared.baas.ObjectBase;
-
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.stackmob.sdk.api.StackMob;
-import com.stackmob.sdk.callback.StackMobCallback;
-import com.stackmob.sdk.exception.StackMobException;
+import shared.baas.DataInferface;
 
 class StackMobHandler implements InvocationHandler {
 	StackMobFacade.SMObject obj;
@@ -27,7 +19,7 @@ class StackMobHandler implements InvocationHandler {
 		String name = m.getName();
 		String key = name; // .substring(3); // assume get set
 		if (args == null || args.length == 0) {
-			if (ObjectBase.PARSE_OBJECT.equals(name))
+			if (DataInferface.OBJECT.equals(name))
 				return obj;
 			if ("toString".equals(name)) {
 				return obj.toString();
@@ -46,7 +38,7 @@ class StackMobHandler implements InvocationHandler {
 					return 0;
 				} else if (object != null
 						&& StackMobFacade.SMObject.class.isInstance(object)
-						&& ObjectBase.class.isAssignableFrom(returnType)) {
+						&& DataInferface.class.isAssignableFrom(returnType)) {
 					return ((StackMobFacade<?>) StackMobFacade.get(returnType))
 							.wrap((StackMobFacade.SMObject) object);
 				} else if (object != null && !returnType.isInstance(object)
@@ -57,7 +49,7 @@ class StackMobHandler implements InvocationHandler {
 				}
 			}
 		} else { // one arg
-			if (ObjectBase.SAVE.equals(name)) {
+			/*if (DataInferface.SAVE.equals(name)) {
 				if (args[0] instanceof GetCallback) {
 					final GetCallback call = (GetCallback) args[0];
 					StackMob.getStackMob().getDatastore().post(obj.className, obj, new StackMobCallback() {
@@ -104,7 +96,7 @@ class StackMobHandler implements InvocationHandler {
 					});
 					return null;
 				}
-			}
+			}*/
 
 			// set value
 			Object object = args[0];
@@ -113,8 +105,8 @@ class StackMobHandler implements InvocationHandler {
 				obj.id = (String) object;
 			}
 
-			if (object instanceof ObjectBase) {
-				put(obj, key, ((ObjectBase) object));
+			if (object instanceof DataInferface) {
+				put(obj, key, (object));
 			} else {
 				put(obj, key, object);
 			}
@@ -133,7 +125,7 @@ class StackMobHandler implements InvocationHandler {
 		obj.put(key, object);
 	}
 
-	private void put(Object obj2, String key, ObjectBase objectBase) {
+	private void put(Object obj2, String key, DataInferface objectBase) {
 		System.out.println(key + "=" + objectBase);
 	}
 

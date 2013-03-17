@@ -1,10 +1,10 @@
 package shared.baas.test;
 
-import shared.baas.FacadeFactory;
+import shared.baas.DataFacadeFactory;
 
 import com.stackmob.sdk.api.StackMob;
 
-public class StackMobFacadeFactory implements FacadeFactory {
+public class StackMobFacadeFactory extends DataFacadeFactory {
 	/* (non-Javadoc)
 	 * @see shared.parse.FacadeFactory#get(java.lang.Class)
 	 */

@@ -1,7 +1,7 @@
 package shared.baas.keyvalue.stackmob;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import shared.baas.DoCallback;
@@ -9,9 +9,8 @@ import shared.baas.keyvalue.DataObject;
 import shared.baas.keyvalue.ListenableFuture;
 import shared.baas.keyvalue.ListenableFuture.Basic;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.stackmob.sdk.api.StackMob;
 import com.stackmob.sdk.api.StackMobDatastore;
@@ -22,16 +21,17 @@ import com.stackmob.sdk.exception.StackMobException;
 public class DataObjectSM implements DataObject {
 	String className;
 //	private String id;
-	Map<String, Object> obj = new HashMap<String, Object>();
+//	Map<String, Object> obj = new HashMap<String, Object>();
+	JsonObject jsonObject;
 
 	public DataObjectSM(String className) {
 		super();
 		this.className = className;
 	}
 
-	public DataObjectSM(String className, Map<String, Object> map) {
+	public DataObjectSM(String className, JsonObject jsonObject) {
 		this.className = className;
-		this.obj = map;
+		this.jsonObject = jsonObject;
 	}
 
 	protected StackMobDatastore dataStore() {
@@ -61,10 +61,10 @@ public class DataObjectSM implements DataObject {
 			@Override
 			public void success(String responseBody) {
 				final JsonElement json = new JsonParser().parse(responseBody);
-				GsonBuilder gsonBuilder = new GsonBuilder();
-		        final Gson gson = gsonBuilder.create();
-				Map<String, Object> map = gson.fromJson(json, Map.class);
-				obj = map;
+//				GsonBuilder gsonBuilder = new GsonBuilder();
+//		        final Gson gson = gsonBuilder.create();
+//				Map<String, Object> map = gson.fromJson(json, Map.class);
+				jsonObject = json.getAsJsonObject();
 
 				future.set(responseBody, null);
 			}
@@ -77,9 +77,9 @@ public class DataObjectSM implements DataObject {
 		
 		final String id = getId();
 		if (id == null) {
-			dataStore().post(className, obj, stackMobCallback);
+			dataStore().post(className, jsonObject, stackMobCallback);
 		} else {
-			dataStore().put(className, id, obj, stackMobCallback);
+			dataStore().put(className, id, jsonObject, stackMobCallback);
 		}
 		
 		return future;
@@ -104,17 +104,43 @@ public class DataObjectSM implements DataObject {
 	@Override
 	public <T> T get(String key, Class<T> type) {
 		final String lowerCase = key.toLowerCase();
-		return (T) obj.get(lowerCase);
+		return (T) jsonObject.get(lowerCase);
 	}
 
 	@Override
 	public void put(String key, Object value) {
-		obj.put(key.toLowerCase(), value);
+//		obj.put(key.toLowerCase(), value);
+		if (value == null)
+			jsonObject.remove(key);
+		else if (value instanceof String)
+			jsonObject.addProperty(key, (String) value);
+		
+		else if (value instanceof Boolean)
+			jsonObject.addProperty(key, (Boolean)value);
+		
+		else if (value instanceof Long)
+			jsonObject.addProperty(key, (Long)value);
+		else if (value instanceof Integer)
+			jsonObject.addProperty(key, (Integer)value);
+		else if (value instanceof Short)
+			jsonObject.addProperty(key, (Short)value);
+		else if (value instanceof Byte)
+			jsonObject.addProperty(key, (Byte)value);
+		
+		else if (value instanceof Double)			
+			jsonObject.addProperty(key, (Double)value);		
+		else if (value instanceof Float)
+			jsonObject.addProperty(key, (Float)value);
+		
+//		else if (value instanceof byte[])
+//			obj.addProperty(key, (byte[])value);
+		else
+			throw new IllegalArgumentException(key+":"+value);
 	}
 
 	String getId() {
 		final String id_key = id_key();
-		return (String) obj.get(id_key);
+		return jsonObject.get(id_key).getAsString();
 	}
 
 	protected String id_key() {
@@ -122,11 +148,16 @@ public class DataObjectSM implements DataObject {
 	}
 
 	void setId(String id) {
-		obj.put(id_key(), id);
+		put(id_key(), id);
 	}
 
 	@Override
 	public Set<String> keySet() {
-		return obj.keySet();
+		final HashSet<String> hashSet = new HashSet<String>();
+		final Set<Entry<String, JsonElement>> entrySet = jsonObject.entrySet();		
+		for (Entry<String, JsonElement> entry : entrySet) {
+			hashSet.add(entry.getKey());
+		}
+		return hashSet;
 	}
 }

@@ -7,8 +7,7 @@ import java.util.concurrent.ExecutionException;
 import org.junit.Before;
 import org.junit.Test;
 
-import shared.baas.DataStoreFacade;
-import shared.baas.FacadeFactory;
+import shared.baas.DataClassFacade;
 
 import com.stackmob.sdk.api.StackMob;
 import com.stackmob.sdk.api.StackMobQuery;
@@ -16,8 +15,8 @@ import com.stackmob.sdk.callback.StackMobCallback;
 import com.stackmob.sdk.exception.StackMobException;
 
 public class StackMobTest {
-	FacadeFactory ff = new StackMobFacadeFactory("37c7ebb3-b6c8-43c7-9bfa-79a5ed82fecc", "c19eae0d-993e-49c7-a430-a30643dff36c");
-	final DataStoreFacade<GameScore> f = ff.get(GameScore.class);
+	StackMobFacadeFactory ff = new StackMobFacadeFactory("37c7ebb3-b6c8-43c7-9bfa-79a5ed82fecc", "c19eae0d-993e-49c7-a430-a30643dff36c");
+	final DataClassFacade<GameScore> f = ff.get(GameScore.class);
 	CountDownLatch latch;
 	
 	@Before

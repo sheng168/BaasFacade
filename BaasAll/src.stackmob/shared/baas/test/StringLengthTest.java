@@ -6,13 +6,12 @@ import java.util.concurrent.ExecutionException;
 import org.junit.Before;
 import org.junit.Test;
 
-import shared.baas.DataStoreFacade;
-import shared.baas.FacadeFactory;
-import shared.baas.GetCallback;
+import shared.baas.DataClassFacade;
+import shared.baas.DoCallback;
 
 public class StringLengthTest {
-	FacadeFactory ff = new StackMobFacadeFactory("37c7ebb3-b6c8-43c7-9bfa-79a5ed82fecc", "c19eae0d-993e-49c7-a430-a30643dff36c");
-	final DataStoreFacade<GameScore> f = ff.get(GameScore.class);
+	StackMobFacadeFactory ff = new StackMobFacadeFactory("37c7ebb3-b6c8-43c7-9bfa-79a5ed82fecc", "c19eae0d-993e-49c7-a430-a30643dff36c");
+	final DataClassFacade<GameScore> f = ff.get(GameScore.class);
 	static String id = "";
 	
 	@Before
@@ -33,11 +32,20 @@ public class StringLengthTest {
 			final int length = name.length();
 			gs.score(length);
 			
-			gs.saveAsync(new GetCallback<GameScore>() {
+			gs.dataObject().saveInBackground(new DoCallback() {
+				
 				@Override
-				public void done(GameScore o) {
+				public void error(Exception e) {
+					System.err.println(length + " error: " + e);
+					e.printStackTrace();
+					latch.countDown();
+				
+				}
+				
+				@Override
+				public void done() {
 					try {
-						id = o.objectId();
+						id = gs.dataObject().getObjectId();
 						System.out.println("saved:"+length);
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
@@ -46,14 +54,8 @@ public class StringLengthTest {
 					
 					latch.countDown();
 				}
-
-				@Override
-				public void error(Exception e) {
-					System.err.println(length + " error: " + e);
-					e.printStackTrace();
-					latch.countDown();
-				}
 			});
+
 			Thread.sleep(1000);
 		}
 		

@@ -2,7 +2,6 @@ package shared.baas.keyvalue.stackmob;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import shared.baas.ListCallback;
 import shared.baas.keyvalue.DataObject;
@@ -11,8 +10,7 @@ import shared.baas.keyvalue.ListenableFuture;
 import shared.baas.keyvalue.ListenableFuture.Basic;
 import shared.baas.keyvalue.parse.DataObjectParse;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.parse.ParseObject;
@@ -95,15 +93,16 @@ public class DataObjectQuerySM implements DataObjectQuery {
 		dataStore().get(query, new StackMobOptions(), new StackMobCallback() {			
 			@Override
 			public void success(String responseBody) {
-				// TODO parse responseBody
-				final JsonElement json = new JsonParser().parse(responseBody);
-				GsonBuilder gsonBuilder = new GsonBuilder();
-		        final Gson gson = gsonBuilder.create();
-				final List<Map<String, Object>> list = gson.fromJson(json, List.class);
-		        
 				final ArrayList<DataObject> result = new ArrayList<DataObject>();
-				for (Map<String, Object> map : list) {
-					result.add(new DataObjectSM(className, map));
+				
+				final JsonElement json = new JsonParser().parse(responseBody);
+				if (json.isJsonArray()) {
+					final JsonArray jsonArray = json.getAsJsonArray();
+					for (int i = 0; i < jsonArray.size(); i++) {
+						result.add(new DataObjectSM(className, jsonArray.get(i).getAsJsonObject()));
+					}
+				} else {
+					future.set(null, new Exception("expecting list"));
 				}
 				future.set(result, null);
 			}

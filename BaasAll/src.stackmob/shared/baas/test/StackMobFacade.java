@@ -7,8 +7,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import shared.baas.DataStoreFacade;
-import shared.baas.Query;
+import shared.baas.DataClassFacade;
+import shared.baas.DataObject;
+import shared.baas.DataQuery;
 
 
 /**
@@ -20,7 +21,7 @@ import shared.baas.Query;
  *
  * @param <T>
  */
-public class StackMobFacade<T> implements DataStoreFacade<T> {
+public class StackMobFacade<T> implements DataClassFacade<T> {
 	Class<T> clazz;
 	Class<?>[] interfaces;
 
@@ -90,21 +91,21 @@ public class StackMobFacade<T> implements DataStoreFacade<T> {
 	/* (non-Javadoc)
 	 * @see shared.parse.DataStoreFacade#newQuery()
 	 */
-	@Override
-	public shared.baas.Query<T> newQuery() {
+//	@Override
+//	public shared.baas.Query<T> newQuery() {
 //		new ParseQuery(RegionUser.class.getSimpleName())
 //		.whereEqualTo("name", name)
 //		.whereEqualTo("user", ParseUser.getCurrentUser())
 //		.
 
-		return null; //new Query<T>(this);
-	}
+//		return null; //new Query<T>(this);
+//	}
 	
 	/* (non-Javadoc)
 	 * @see shared.parse.DataStoreFacade#newOrQuery(shared.parse.ParseFacade.Query)
 	 */
-	@Override
-	public Query<T> newOrQuery(Query<T>... queries) {
+//	@Override
+//	public Query<T> newOrQuery(Query<T>... queries) {
 //		new ParseQuery(RegionUser.class.getSimpleName())
 //		.whereEqualTo("name", name)
 //		.whereEqualTo("user", ParseUser.getCurrentUser())
@@ -115,8 +116,26 @@ public class StackMobFacade<T> implements DataStoreFacade<T> {
 //			list.add(q.pq);
 //		}
 		
-		Query<T> query = null; //wrap(ParseQuery.or(list));
-		return query;
+//		Query<T> query = null; //wrap(ParseQuery.or(list));
+//		return query;
+//	}
+
+	@Override
+	public DataQuery<T> newQuery() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public DataQuery<T> newOrQuery(DataQuery<T>... queries) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public T wrap(DataObject object) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 //	public BasicQuery<T> wrap(ParseQuery pq) {
