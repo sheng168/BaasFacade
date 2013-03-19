@@ -11,16 +11,21 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 
-public class DataObjectQuerySqlite<T> implements DataObjectQuery {
+public class DataObjectQuerySqlite implements DataObjectQuery {
 //	SqliteFacade<T> facade;
 	SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
 	StringBuilder orderBy = new StringBuilder();
 	private int skip;
 	private int count;
 	ContentResolver cr;
-	private String className;
+	private final String className;
 	private Uri baseUri;
 
+
+	public DataObjectQuerySqlite(String className) {
+		super();
+		this.className = className;
+	}
 
 	@Override
 	public ListenableFuture<List<DataObject>> find() {
@@ -35,7 +40,7 @@ public class DataObjectQuerySqlite<T> implements DataObjectQuery {
 		
 		int last = Math.max(c.getCount(), skip+count);
 		for (int i = skip; i < last; i++) {
-			list.add(new DataObjectSqlite());
+			list.add(new DataObjectSqlite(className));
 		}
 		return null;
 	}

@@ -21,6 +21,11 @@ public class DataObjectSqlite implements DataObject {
 
 
 
+	public DataObjectSqlite(String className) {
+		super();
+		this.className = className;
+	}
+
 	@Override
 	public void put(String key, Object value) {
 		if (value == null)
@@ -48,7 +53,7 @@ public class DataObjectSqlite implements DataObject {
 		else if (value instanceof byte[])
 			values.put(key, (byte[])value);
 		else
-			throw new IllegalArgumentException(key+":"+value);
+			throw new IllegalArgumentException(key+":"+value + " class:" + value.getClass());
 	}
 	
 	@SuppressWarnings("unchecked")

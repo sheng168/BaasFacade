@@ -36,5 +36,15 @@
 			<type>2</type>
 			<location>/Users/sheng/Dropbox/share/active/todo/todo-android/sub-projects/parsefacade/BaasFacade/src</location>
 		</link>
+		<link>
+			<name>src_parse</name>
+			<type>2</type>
+			<location>/Users/sheng/Dropbox/share/active/todo/todo-android/sub-projects/parsefacade/ParseFacade/src</location>
+		</link>
+		<link>
+			<name>src_stackmob</name>
+			<type>2</type>
+			<location>/Users/sheng/Dropbox/share/active/todo/todo-android/sub-projects/parsefacade/StackMobFacade/src</location>
+		</link>
 	</linkedResources>
 </projectDescription>

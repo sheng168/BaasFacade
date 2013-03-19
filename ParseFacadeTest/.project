@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>ParseFacadeTest</name>
+	<name>BaasFacadeTest</name>
 	<comment></comment>
 	<projects>
 		<project>ParseFacade</project>

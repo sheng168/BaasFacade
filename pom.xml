@@ -22,6 +22,7 @@
 	<modules>
 		<module>BaasFacade</module>
 		<module>ParseFacade</module>
+		<module>StackMobFacade</module>
 	</modules>
 
 	<scm>
