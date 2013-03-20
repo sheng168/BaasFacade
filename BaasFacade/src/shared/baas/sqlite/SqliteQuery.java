@@ -124,7 +124,7 @@ public class SqliteQuery<T> implements DataQuery<T> {
 //	}
 
 
-	@Override
+//	@Override
 	public void findInBackground(final ListCallback<T> callback) {
 		try {
 			callback.done(find());
@@ -149,7 +149,7 @@ public class SqliteQuery<T> implements DataQuery<T> {
 //
 	}
 
-	@Override
+//	@Override
 	public List<T> find() throws Exception {
 		Uri uri = Uri.withAppendedPath(facade.sqliteFacadeFactory.baseUri, facade.getClazz().getSimpleName());
 		
@@ -161,7 +161,7 @@ public class SqliteQuery<T> implements DataQuery<T> {
 		final ArrayList<T> list = new ArrayList<T>();
 		
 		for (int i = 0; i < c.getCount(); i++) {
-			list.add(facade.wrap(new SqliteObjectDataWithCursor<T>(facade.sqliteFacadeFactory, facade.getClazz().getSimpleName(), c, i)));
+			list.add(facade.wrap(new SqliteObjectDataWithCursor(facade.sqliteFacadeFactory, facade.getClazz().getSimpleName(), c, i)));
 		}
 		return list;
 	}

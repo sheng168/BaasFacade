@@ -1,26 +1,21 @@
-package shared.baas.sqlite;
+package shared.baas.keyvalue.sqlite;
 
-
+import android.content.ContentResolver;
 import android.database.Cursor;
+import android.net.Uri;
 
-class SqliteObjectDataWithCursor extends SqliteObjectData {
+public class DataObjectWithCursor extends DataObjectSqlite {
 	Cursor cursor;
 	int position;
 	
-//	public SqliteObjectDataWithCursor(SqliteFacadeFactory factory, String className) {
-//		super(factory, className);
-//
-//	}
-
-	
-	public SqliteObjectDataWithCursor(SqliteFacadeFactory factory,
+	public DataObjectWithCursor(ContentResolver cr, Uri baseUri,
 			String className, Cursor cursor, int position) {
-		super(factory, className);
+		super(cr, baseUri, className);
 		this.cursor = cursor;
 		this.position = position;
 	}
 
-	
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T get(String key, Class<T> type) {
 		Object object = super.get(key, type);
@@ -38,12 +33,8 @@ class SqliteObjectDataWithCursor extends SqliteObjectData {
 			else
 				throw new UnsupportedOperationException("don't know how to get value of type: " + type);
 		}
-		System.out.println(object);
+		
 		return (T) object;
 	}
 
-	@Override
-	public String toString() {
-		return super.toString() + values;
-	}
 }

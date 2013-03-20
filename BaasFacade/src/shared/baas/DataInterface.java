@@ -1,9 +1,11 @@
 package shared.baas;
 
+import shared.baas.keyvalue.DataObject;
+
 
 
 /**
- * Extend this interface to define you ParseObject class field.
+ * Extend this interface to define your class fields.
  * Don't use primitive types if you may be reading fields with null values.
  * Supported types include boolean, int, long, double (not float), String, Date.
  * If you never write to a field(even a primitive one) it'll have a null value rather than a default value.

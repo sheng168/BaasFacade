@@ -1,13 +1,16 @@
 package shared.baas.sqlite;
 
 
+import java.util.Set;
+
 import shared.baas.DoCallback;
 import shared.baas.DataFacadeFactory;
-import shared.baas.impl.AbstractObjectData;
+import shared.baas.impl.AbstractDataObject;
+import shared.baas.keyvalue.ListenableFuture;
 import android.content.ContentValues;
 import android.net.Uri;
 
-class SqliteObjectData<T> extends AbstractObjectData<T> {
+class SqliteObjectData extends AbstractDataObject {
 	final ContentValues values = new ContentValues();
 	
 //	Context ctx = null;
@@ -54,12 +57,12 @@ class SqliteObjectData<T> extends AbstractObjectData<T> {
 			throw new IllegalArgumentException(key+":"+value);
 	}
 	
-	@Override
-	public Object get(String key, Class<?> type) {
-		return values.get(key);
+//	@Override
+	public <T> T get(String key, Class<T> type) {
+		return (T) values.get(key);
 	}
 
-	@Override
+//	@Override
 	public void saveInBackground(DoCallback callback) {		
 		Uri url = Uri.withAppendedPath(factory.baseUri, className);
 		factory.ctx.getContentResolver().insert(url, values);
@@ -69,20 +72,20 @@ class SqliteObjectData<T> extends AbstractObjectData<T> {
 
 	@Override
 	public void deleteInBackground(DoCallback callback) {
-		Uri url = Uri.withAppendedPath(factory.baseUri, className);
-		url = Uri.withAppendedPath(url, getObjectId());
-		factory.ctx.getContentResolver().delete(url, null, null);
+//		Uri url = Uri.withAppendedPath(factory.baseUri, className);
+//		url = Uri.withAppendedPath(url, getObjectId());
+//		factory.ctx.getContentResolver().delete(url, null, null);
 		
 		callback.done(null);
 	}
 	
-	@Override
+//	@Override
 	public void refreshInBackground(DoCallback callback) {
 		callback.done(new UnsupportedOperationException());
 	}
 
 
-	@Override
+//	@Override
 	public DataFacadeFactory getFactory() {
 		return factory;
 	}
@@ -90,5 +93,17 @@ class SqliteObjectData<T> extends AbstractObjectData<T> {
 	@Override
 	public String toString() {
 		return super.toString() + values;
+	}
+
+	@Override
+	public Set<String> keySet() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ListenableFuture<String> save() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

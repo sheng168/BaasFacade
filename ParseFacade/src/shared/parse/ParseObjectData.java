@@ -2,15 +2,14 @@ package shared.parse;
 
 import java.util.Date;
 
-import shared.baas.DoCallback;
 import shared.baas.DataFacadeFactory;
-import shared.baas.DataObject;
+import shared.baas.DoCallback;
 
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.SaveCallback;
 
-public class ParseObjectData implements DataObject {
+public class ParseObjectData /*implements DataObject*/ {
 	ParseObject parse;
 	
 	public ParseObjectData(ParseObject parse) {
@@ -28,7 +27,7 @@ public class ParseObjectData implements DataObject {
 	/* (non-Javadoc)
 	 * @see shared.baas.DataObject#deleteInBackground(com.parse.DeleteCallback)
 	 */
-	@Override
+//	@Override
 	public void deleteInBackground(final DoCallback callback) {		
 		parse.saveInBackground(new SaveCallback() {			
 			@Override
@@ -50,7 +49,7 @@ public class ParseObjectData implements DataObject {
 	/* (non-Javadoc)
 	 * @see shared.baas.DataObject#getCreatedAt()
 	 */
-	@Override
+//	@Override
 	public Date getCreatedAt() {
 		
 		return parse.getCreatedAt();
@@ -59,7 +58,7 @@ public class ParseObjectData implements DataObject {
 	/* (non-Javadoc)
 	 * @see shared.baas.DataObject#getObjectId()
 	 */
-	@Override
+//	@Override
 	public String getObjectId() {
 		
 		return parse.getObjectId();
@@ -68,7 +67,7 @@ public class ParseObjectData implements DataObject {
 	/* (non-Javadoc)
 	 * @see shared.baas.DataObject#getUpdatedAt()
 	 */
-	@Override
+//	@Override
 	public Date getUpdatedAt() {
 		
 		return parse.getUpdatedAt();
@@ -86,7 +85,7 @@ public class ParseObjectData implements DataObject {
 	/* (non-Javadoc)
 	 * @see shared.baas.DataObject#refreshInBackground(com.parse.RefreshCallback)
 	 */
-	@Override
+//	@Override
 	public void refreshInBackground(final DoCallback callback) {		
 		parse.saveInBackground(new SaveCallback() {			
 			@Override
@@ -99,7 +98,7 @@ public class ParseObjectData implements DataObject {
 	/* (non-Javadoc)
 	 * @see shared.baas.DataObject#saveInBackground(com.parse.SaveCallback)
 	 */
-	@Override
+//	@Override
 	public void saveInBackground(final DoCallback callback) {		
 		parse.saveInBackground(new SaveCallback() {			
 			@Override
@@ -109,22 +108,22 @@ public class ParseObjectData implements DataObject {
 		});
 	}
 
-	@Override
+//	@Override
 	public void setObjectId(String newObjectId) {		
 		parse.setObjectId(newObjectId);
 	}
 
-	@Override
+//	@Override
 	public Object get(String key, Class<?> type) {
 		return parse.get(key);
 	}
 
-	@Override
+//	@Override
 	public void put(String key, Object value) {
 		parse.put(key, value);
 	}
 
-	@Override
+//	@Override
 	public DataFacadeFactory getFactory() {
 		return new ParseFacadeFactory();
 	}

@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Map;
 
 import shared.baas.DataClassFacade;
-import shared.baas.DataObject;
 import shared.baas.DataQuery;
+import shared.baas.keyvalue.DataObject;
 
 
 /**

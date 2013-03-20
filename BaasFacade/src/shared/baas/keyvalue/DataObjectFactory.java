@@ -1,8 +1,15 @@
 package shared.baas.keyvalue;
 
+import shared.baas.DataClassFacade;
+import shared.baas.impl.BasicDataClassFacade;
 
 
-public interface DataObjectFactory {
-	public DataObject createDataObject(String className);
-	public DataObjectQuery createDataObjectQuery(String className);
+
+public abstract class DataObjectFactory {
+	public abstract DataObject createDataObject(String className);
+	public abstract DataObjectQuery createDataObjectQuery(String className);
+	
+	public <T> DataClassFacade<T> get(Class<T> clazz) {
+		return new BasicDataClassFacade<T>(this, clazz);
+	}
 }

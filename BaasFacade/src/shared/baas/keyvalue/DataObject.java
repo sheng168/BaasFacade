@@ -26,7 +26,7 @@ public interface DataObject {
 
 //	public abstract boolean isDataAvailable();
 
-	public abstract void refreshInBackground(DoCallback callback);
+//	public abstract void refreshInBackground(DoCallback callback);
 
 	public ListenableFuture<String> save();
 

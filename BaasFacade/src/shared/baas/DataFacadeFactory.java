@@ -16,6 +16,7 @@ public abstract class DataFacadeFactory {
 	 */
 	public abstract <T> DataClassFacade<T> get(Class<T> clazz);
 
+	// ***** factory **************
 	private static DataFacadeFactory instance;
 	
 	public static DataFacadeFactory getDefault() {

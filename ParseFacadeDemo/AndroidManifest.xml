@@ -14,6 +14,14 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
+        
+		<provider
+            android:name="shared.baas.demo.provider.BaasDemoProvider"
+            android:authorities="shared.baas.demo.provider.BaasDemoProvider"
+            android:exported="false" >
+            <grant-uri-permission android:pathPattern=".*" />
+        </provider>
+        
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main" >

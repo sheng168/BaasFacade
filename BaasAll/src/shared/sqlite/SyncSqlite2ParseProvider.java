@@ -26,7 +26,7 @@ import java.util.Set;
 import shared.baas.keyvalue.DataObject;
 import shared.baas.keyvalue.DataObjectFactory;
 import shared.baas.keyvalue.DataObjectQuery;
-import shared.baas.keyvalue.stackmob.DataObjectFactorySM;
+import shared.baas.keyvalue.parse.DataObjectFactoryParse;
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -42,10 +42,6 @@ import android.text.TextUtils;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.SaveCallback;
-//import shared.baas.keyvalue.parse.DataObjectParse;
-//import shared.baas.keyvalue.parse.DataObjectQueryParse;
-//import shared.baas.keyvalue.DataObject;
-//import shared.baas.keyvalue.parse.DataObjectQueryParse;
 
 /**
  * Provides access to a database of notes. Each note has a title, the note
@@ -1031,8 +1027,8 @@ public abstract class SyncSqlite2ParseProvider extends ContentProvider //impleme
 
 					// TODO decide what to use
 					final DataObjectFactory factory = 
-							new DataObjectFactorySM();
-//							new DataObjectFactoryParse();
+//							new DataObjectFactorySM();
+							new DataObjectFactoryParse();
 					
 					final DataObjectQuery query = factory.createDataObjectQuery(table);
 					final DataObjectQuery whereGreaterThan = query

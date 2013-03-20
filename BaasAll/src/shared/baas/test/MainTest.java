@@ -24,41 +24,20 @@ public class MainTest {
 	
 	@Test
 	public void testSave() throws InterruptedException, ExecutionException {
-		final CountDownLatch latch = new CountDownLatch(1);
+//		final CountDownLatch latch = new CountDownLatch(1);
 		
 		final GameScore gs = f.create();
 		gs.name("user");
 		gs.score(100);
 		
-		gs.dataObject().saveInBackground(new DoCallback() {
-			@Override
-			public void done() {
-				try {
-					id = gs.dataObject().getObjectId();
-					System.out.println("saved:"+id);
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				
-				latch.countDown();
-			}
-
-			@Override
-			public void error(Exception e) {
-				e.printStackTrace();
-				latch.countDown();
-			}
-		});
-		
-		latch.await();
+		gs.dataObject().save().get();
 	}
 
 	@Test
 	public void testDelete() throws InterruptedException {
 		final CountDownLatch latch = new CountDownLatch(1);
 		final GameScore gs = f.create();
-		gs.dataObject().setObjectId(id);
+//		gs.dataObject().setObjectId(id); //TODO
 		gs.name("user");
 		gs.dataObject().deleteInBackground(new DoCallback() {
 			@Override
@@ -83,20 +62,7 @@ public class MainTest {
 		query.equalTo().name("user");
 		query.orderAsc().score();
 		query.include().name();
-		query.findInBackground(new ListCallback<GameScore>() {
-			
-			@Override
-			public void error(Exception e) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void done(List<GameScore> list) {
-				// TODO Auto-generated method stub
-				
-			}
-		});
+//		query.find()
 	}
 
 }

@@ -3,9 +3,9 @@ package shared.baas.impl;
 import java.lang.reflect.Proxy;
 
 import shared.baas.DataClassFacade;
-import shared.baas.DataObject;
+import shared.baas.keyvalue.DataObject;
 
-public abstract class AbstractDataStoreFacade<T> implements DataClassFacade<T> {
+public abstract class AbstractDataClassFacade<T> implements DataClassFacade<T> {
 	protected Class<T> clazz;
 	Class<?>[] interfaces;
 	
@@ -17,7 +17,7 @@ public abstract class AbstractDataStoreFacade<T> implements DataClassFacade<T> {
 		return interfaces;
 	}
 
-	public AbstractDataStoreFacade(Class<T> clazz) {
+	public AbstractDataClassFacade(Class<T> clazz) {
 		super();
 		assert clazz != null;
 		assert clazz.isInterface();

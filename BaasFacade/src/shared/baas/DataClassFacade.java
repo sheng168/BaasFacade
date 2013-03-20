@@ -1,5 +1,7 @@
 package shared.baas;
 
+import shared.baas.keyvalue.DataObject;
+
 
 public interface DataClassFacade<T> {
 

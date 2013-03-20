@@ -458,17 +458,23 @@ public abstract class GenericSqliteProvider extends ContentProvider //implements
 		// }
 
 //		values.put(FIELD_STATUS, "insert");
+		final long rowId;
 		
-		// Opens the database object in "write" mode.
-		final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+		if (true) {
+			rowId = new DataStoreSqlite(mOpenHelper).save(table, values);
+		} else {
+			// Opens the database object in "write" mode.
+			final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
 
-		// Performs the insert and returns the ID of the new note.
-		final long rowId = db.insert(table, // The table to insert into.
-				null, // A hack, SQLite sets this column value to null
-						// if values is empty.
-				values // A map of column names, and the values to insert
-						// into the columns.
-				);
+			// Performs the insert and returns the ID of the new note.
+			rowId = db.insert(table, // The table to insert into.
+					null, // A hack, SQLite sets this column value to null
+							// if values is empty.
+					values // A map of column names, and the values to insert
+							// into the columns.
+					);
+		}
+
 
 		// If the insert succeeded, the row ID exists.
 		if (rowId > 0) {

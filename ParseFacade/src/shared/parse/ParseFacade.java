@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import shared.baas.DataClassFacade;
-import shared.baas.DataObject;
+import shared.baas.keyvalue.DataObject;
 import shared.parse.query.ParseQueryEqualHandler;
 import shared.parse.query.ParseQueryIncludeHandler;
 import shared.parse.query.ParseQueryNotEqualHandler;
@@ -206,7 +206,7 @@ public class ParseFacade<T> implements DataClassFacade<T> {
 					facade.interfaces, new ParseQueryIncludeHandler(pq));
 		}
 
-		@Override
+//		@Override
 		public List<T> find() throws ParseException {
 			return facade.wrap(pq.find());
 		}
@@ -241,7 +241,7 @@ public class ParseFacade<T> implements DataClassFacade<T> {
 			return pq;
 		}
 
-		@Override
+//		@Override
 		public void findInBackground(final shared.baas.ListCallback<T> callback) {
 			pq.findInBackground(new FindCallback() {
 				@Override

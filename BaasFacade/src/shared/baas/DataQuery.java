@@ -2,6 +2,8 @@ package shared.baas;
 
 import java.util.List;
 
+import shared.baas.keyvalue.ListenableFuture;
+
 public interface DataQuery<T> {
 	public abstract T equalTo();
 
@@ -10,9 +12,11 @@ public interface DataQuery<T> {
 
 	public abstract T include();
 
-	public abstract List<T> find() throws Exception;
+//	ListenableFuture<List<T>> find() throws Exception;
 
-	public abstract void findInBackground(final ListCallback<T> callback);
+//	public abstract List<T> find() throws Exception;
+
+//	public abstract void findInBackground(final ListCallback<T> callback);
 
 //	public abstract void getInBackground(String objectId, GetCallback<T> callback);
 

@@ -32,31 +32,9 @@ public class StringLengthTest {
 			final int length = name.length();
 			gs.score(length);
 			
-			gs.dataObject().saveInBackground(new DoCallback() {
-				
-				@Override
-				public void error(Exception e) {
-					System.err.println(length + " error: " + e);
-					e.printStackTrace();
-					latch.countDown();
-				
-				}
-				
-				@Override
-				public void done() {
-					try {
-						id = gs.dataObject().getObjectId();
-						System.out.println("saved:"+length);
-					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					
-					latch.countDown();
-				}
-			});
+			gs.dataObject().save().get();
 
-			Thread.sleep(1000);
+//			Thread.sleep(1000);
 		}
 		
 		latch.await();

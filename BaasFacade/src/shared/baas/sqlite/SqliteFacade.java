@@ -3,7 +3,7 @@ package shared.baas.sqlite;
 
 import shared.baas.DataClassFacade;
 import shared.baas.DataQuery;
-import shared.baas.impl.AbstractDataStoreFacade;
+import shared.baas.impl.AbstractDataClassFacade;
 
 /**
  * Type safe facade for the parse.com API. Class and field names are defined
@@ -14,7 +14,7 @@ import shared.baas.impl.AbstractDataStoreFacade;
  * 
  * @param <T>
  */
-public class SqliteFacade<T> extends AbstractDataStoreFacade<T> implements DataClassFacade<T> {
+public class SqliteFacade<T> extends AbstractDataClassFacade<T> implements DataClassFacade<T> {
 
 	SqliteFacadeFactory sqliteFacadeFactory;
 
@@ -23,8 +23,8 @@ public class SqliteFacade<T> extends AbstractDataStoreFacade<T> implements DataC
 		this.sqliteFacadeFactory = sqliteFacadeFactory;
 	}
 
-	protected SqliteObjectData<T> newObjectData() {
-		return new SqliteObjectData<T>(sqliteFacadeFactory, clazz.getSimpleName());
+	protected SqliteObjectData newObjectData() {
+		return new SqliteObjectData(sqliteFacadeFactory, clazz.getSimpleName());
 	}
 
 	@Override

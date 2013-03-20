@@ -6,7 +6,7 @@ import shared.baas.keyvalue.DataObjectQuery;
 
 import com.parse.ParseObject;
 
-public class DataObjectFactoryParse implements DataObjectFactory {
+public class DataObjectFactoryParse extends DataObjectFactory {
 	@Override
 	public DataObject createDataObject(String className) {
 		return new DataObjectParse(new ParseObject(className));

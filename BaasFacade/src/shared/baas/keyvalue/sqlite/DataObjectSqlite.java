@@ -2,15 +2,18 @@ package shared.baas.keyvalue.sqlite;
 
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
 import shared.baas.DoCallback;
 import shared.baas.keyvalue.DataObject;
 import shared.baas.keyvalue.ListenableFuture;
+import shared.baas.keyvalue.ListenableFuture.Basic;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.net.Uri;
+import android.provider.BaseColumns;
 
 public class DataObjectSqlite implements DataObject {
 	final ContentValues values = new ContentValues();
@@ -19,12 +22,17 @@ public class DataObjectSqlite implements DataObject {
 	Uri baseUri;
 	String className;
 
-
-
-	public DataObjectSqlite(String className) {
+	protected DataObjectSqlite(ContentResolver cr, Uri baseUri, String className) {
 		super();
+		this.cr = cr;
+		this.baseUri = baseUri;
 		this.className = className;
 	}
+
+//	private DataObjectSqlite(String className) {
+//		super();
+//		this.className = className;
+//	}
 
 	@Override
 	public void put(String key, Object value) {
@@ -64,10 +72,24 @@ public class DataObjectSqlite implements DataObject {
 
 	@Override
 	public ListenableFuture<String> save() {		
-		Uri url = Uri.withAppendedPath(baseUri, className);
-		cr.insert(url, values);
+		final Basic<String> future = new ListenableFuture.Basic<String>();
 		
-		return null;
+		try {
+			Uri url = Uri.withAppendedPath(baseUri, className);
+			Uri insert = cr.insert(url, values);
+			if (insert == null) {
+				future.set(null, new Exception("insert return null Uri"));
+			} else {
+				List<String> segs = insert.getPathSegments();
+				String id = segs.get(segs.size() - 1);
+				values.put(BaseColumns._ID, id);
+				future.set(id, null);
+			}
+		} catch (Exception e) {
+			future.set(null, e);
+		}
+		
+		return future;
 	}
 
 	@Override
@@ -79,7 +101,7 @@ public class DataObjectSqlite implements DataObject {
 		callback.done(null);
 	}
 	
-	@Override
+//	@Override
 	public void refreshInBackground(DoCallback callback) {
 		callback.done(new UnsupportedOperationException());
 	}

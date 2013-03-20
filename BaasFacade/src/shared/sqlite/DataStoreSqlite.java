@@ -68,6 +68,8 @@ public class DataStoreSqlite {
 						type = "DOUBLE";
 					else if (v instanceof String)
 						type = "TEXT";
+					else if (v instanceof Boolean)
+						type = "INTEGER";
 					else if (v instanceof byte[])
 						type = "BLOB";
 					else

@@ -5,7 +5,8 @@ import java.lang.reflect.Method;
 
 import shared.baas.DataFacadeFactory;
 import shared.baas.DataInterface;
-import shared.baas.DataObject;
+import shared.baas.keyvalue.DataObject;
+//import shared.baas.DataObject;
 //import shared.parse.ParseBase;
 //import shared.parse.ParseFacade;
 //import com.parse.ParseObject;
@@ -44,9 +45,10 @@ public class InterfaceHandler implements InvocationHandler {
 				} else if (object != null
 						&& DataObject.class.isInstance(object)
 						&& DataInterface.class.isAssignableFrom(returnType)) {
-					DataFacadeFactory factory = obj.getFactory();					
-					return (factory.get(returnType))
-							.wrap((DataObject) object);
+//					DataFacadeFactory factory = obj.getFactory();					
+//					return (factory.get(returnType))
+//							.wrap((DataObject) object);
+					return null; //TODO
 				} else if (object != null && !returnType.isInstance(object)
 						&& !returnType.isPrimitive()) {
 					return null;

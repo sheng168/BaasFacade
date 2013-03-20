@@ -22,7 +22,7 @@ public class DataObjectSM implements DataObject {
 	String className;
 //	private String id;
 //	Map<String, Object> obj = new HashMap<String, Object>();
-	JsonObject jsonObject;
+	JsonObject jsonObject = new JsonObject();
 
 	public DataObjectSM(String className) {
 		super();
@@ -38,7 +38,7 @@ public class DataObjectSM implements DataObject {
 		return StackMob.getStackMob().getDatastore();
 	}
 
-	@Override
+//	@Override
 	public void refreshInBackground(final DoCallback callback) {
 		dataStore().get(className+"/"+getId(), new StackMobCallback() {
 			@Override
@@ -66,7 +66,7 @@ public class DataObjectSM implements DataObject {
 //				Map<String, Object> map = gson.fromJson(json, Map.class);
 				jsonObject = json.getAsJsonObject();
 
-				future.set(responseBody, null);
+				future.set(getId(), null);
 			}
 
 			@Override
@@ -77,9 +77,9 @@ public class DataObjectSM implements DataObject {
 		
 		final String id = getId();
 		if (id == null) {
-			dataStore().post(className, jsonObject, stackMobCallback);
+			dataStore().post(className, jsonObject.toString(), stackMobCallback);
 		} else {
-			dataStore().put(className, id, jsonObject, stackMobCallback);
+			dataStore().put(className, id, jsonObject.toString(), stackMobCallback);
 		}
 		
 		return future;
@@ -140,11 +140,15 @@ public class DataObjectSM implements DataObject {
 
 	String getId() {
 		final String id_key = id_key();
-		return jsonObject.get(id_key).getAsString();
+		JsonElement jsonElement = jsonObject.get(id_key);
+		if (jsonElement == null)
+			return null;
+		else
+			return jsonElement.getAsString();
 	}
 
 	protected String id_key() {
-		return className + "_id";
+		return className.toLowerCase() + "_id";
 	}
 
 	void setId(String id) {

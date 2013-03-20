@@ -52,7 +52,7 @@ public class DataObjectParse implements DataObject {
 		return obj.keySet();
 	}
 	
-	@Override
+//	@Override
 	public void refreshInBackground(final DoCallback callback) {
 		obj.refreshInBackground(new RefreshCallback() {
 			@Override
