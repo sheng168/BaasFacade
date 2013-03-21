@@ -14,7 +14,7 @@ import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
-public class DataObjectQueryParse implements DataObjectQuery {
+public class DataObjectQueryParse extends DataObjectQuery {
 	ParseQuery query;
 
 	public DataObjectQueryParse(String className) {
@@ -24,13 +24,15 @@ public class DataObjectQueryParse implements DataObjectQuery {
 
 	// equality
 	@Override
-	public void whereEqualTo(String key, Object value) {
+	public DataObjectQuery whereEqualTo(String key, Object value) {
 		query.whereEqualTo(key, value);
+		return this;
 	}
 
 	@Override
-	public void whereNotEqualTo(String key, Object value) {
+	public DataObjectQuery whereNotEqualTo(String key, Object value) {
 		query.whereNotEqualTo(key, value);
+		return this;
 	}
 
 	// inequality
@@ -42,20 +44,23 @@ public class DataObjectQueryParse implements DataObjectQuery {
 
 	// sorting
 	@Override
-	public void orderByAsc(String key) {
+	public DataObjectQuery orderByAsc(String key) {
 		query.addAscendingOrder(key);
+		return this;
 	}
 
 	@Override
-	public void orderByDesc(String key) {
+	public DataObjectQuery orderByDesc(String key) {
 		query.addDescendingOrder(key);
+		return this;
 	}
 
 	// paging
 	@Override
-	public void isInRange(int newSkip, int newLimit) {
+	public DataObjectQuery isInRange(int newSkip, int newLimit) {
 		query.setSkip(newSkip);
 		query.setLimit(newLimit);
+		return this;
 	}
 
 //	@Override

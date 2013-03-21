@@ -70,7 +70,7 @@ class SqliteObjectData extends AbstractDataObject {
 		callback.done(null);
 	}
 
-	@Override
+//	@Override
 	public void deleteInBackground(DoCallback callback) {
 //		Uri url = Uri.withAppendedPath(factory.baseUri, className);
 //		url = Uri.withAppendedPath(url, getObjectId());

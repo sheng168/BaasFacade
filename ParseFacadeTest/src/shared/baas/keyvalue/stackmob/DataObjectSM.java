@@ -18,7 +18,7 @@ import com.stackmob.sdk.callback.StackMobCallback;
 import com.stackmob.sdk.exception.StackMobException;
 //import shared.baas.DataObject;
 
-public class DataObjectSM implements DataObject {
+public class DataObjectSM extends DataObject {
 	String className;
 //	private String id;
 //	Map<String, Object> obj = new HashMap<String, Object>();
@@ -85,7 +85,7 @@ public class DataObjectSM implements DataObject {
 		return future;
 	}
 
-	@Override
+//	@Override
 	public void deleteInBackground(final DoCallback callback) {
 		dataStore().delete(className, getId(), new StackMobCallback() {
 			@Override
@@ -132,6 +132,8 @@ public class DataObjectSM implements DataObject {
 		else if (value instanceof Float)
 			jsonObject.addProperty(key, (Float)value);
 		
+		else if (value instanceof DataObjectSM)
+			jsonObject.add(key, ((DataObjectSM)value).jsonObject);
 //		else if (value instanceof byte[])
 //			obj.addProperty(key, (byte[])value);
 		else

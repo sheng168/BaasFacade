@@ -1,18 +1,13 @@
 package shared.baas.sqlite;
 
 import java.lang.reflect.Proxy;
-import java.util.ArrayList;
-import java.util.List;
 
 import shared.baas.DataQuery;
-import shared.baas.ListCallback;
 import shared.baas.impl.HandlerOneArg;
 import shared.baas.impl.HandlerZeroArg;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteQueryBuilder;
-import android.net.Uri;
 
-public class SqliteQuery<T> implements DataQuery<T> {
+public class SqliteQuery<T> extends DataQuery<T> {
 	SqliteFacade<T> facade;
 	SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
 	StringBuilder orderBy = new StringBuilder();
@@ -125,14 +120,14 @@ public class SqliteQuery<T> implements DataQuery<T> {
 
 
 //	@Override
-	public void findInBackground(final ListCallback<T> callback) {
-		try {
-			callback.done(find());
-		} catch (Exception e) {
-			callback.equals(e);
-		}
-		
-	}
+//	public void findInBackground(final ListCallback<T> callback) {
+//		try {
+//			callback.done(find());
+//		} catch (Exception e) {
+//			callback.equals(e);
+//		}
+//		
+//	}
 
 //	@Override
 	public void getInBackground(String objectId,
@@ -150,21 +145,22 @@ public class SqliteQuery<T> implements DataQuery<T> {
 	}
 
 //	@Override
-	public List<T> find() throws Exception {
-		Uri uri = Uri.withAppendedPath(facade.sqliteFacadeFactory.baseUri, facade.getClazz().getSimpleName());
-		
-		String sortOrder = orderBy.length() == 0 ? null : orderBy.toString();
-		String selection = null;
-		String[] selectionArgs = null;
-		final Cursor c = facade.sqliteFacadeFactory.ctx.getContentResolver().query(uri, null, selection, selectionArgs, sortOrder);
-		
-		final ArrayList<T> list = new ArrayList<T>();
-		
-		for (int i = 0; i < c.getCount(); i++) {
-			list.add(facade.wrap(new SqliteObjectDataWithCursor(facade.sqliteFacadeFactory, facade.getClazz().getSimpleName(), c, i)));
-		}
-		return list;
-	}
+//	@Override
+//	public List<T> find() throws Exception {
+//		Uri uri = Uri.withAppendedPath(facade.sqliteFacadeFactory.baseUri, facade.getClazz().getSimpleName());
+//		
+//		String sortOrder = orderBy.length() == 0 ? null : orderBy.toString();
+//		String selection = null;
+//		String[] selectionArgs = null;
+//		final Cursor c = facade.sqliteFacadeFactory.ctx.getContentResolver().query(uri, null, selection, selectionArgs, sortOrder);
+//		
+//		final ArrayList<T> list = new ArrayList<T>();
+//		
+//		for (int i = 0; i < c.getCount(); i++) {
+//			list.add(facade.wrap(new SqliteObjectDataWithCursor(facade.sqliteFacadeFactory, facade.getClazz().getSimpleName(), c, i)));
+//		}
+//		return list;
+//	}
 
 	@Override
 	public String toString() {

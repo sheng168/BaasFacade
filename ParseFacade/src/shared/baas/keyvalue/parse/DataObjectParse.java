@@ -15,7 +15,7 @@ import com.parse.SaveCallback;
 
 //import shared.baas.DataObject;
 
-public class DataObjectParse implements DataObject {
+public class DataObjectParse extends DataObject {
 	ParseObject obj;
 
 	public DataObjectParse(String className) {
@@ -43,8 +43,13 @@ public class DataObjectParse implements DataObject {
 	public void put(String key, Object value) {
 		if (OBJECT_ID.equals(key))
 			obj.setObjectId((String) value);
-		else
+		else if (value == null) {
+			obj.remove(key);
+		} else if (value instanceof DataObjectParse) {
+			obj.put(key, ((DataObjectParse)value).obj);
+		} else {
 			obj.put(key, value); //TODO reject updatedAt here?
+		}
 	}
 
 	@Override
@@ -84,7 +89,7 @@ public class DataObjectParse implements DataObject {
 		return future;
 	}
 
-	@Override
+//	@Override
 	public void deleteInBackground(final DoCallback callback) {
 		obj.deleteInBackground(new DeleteCallback() {			
 			@Override

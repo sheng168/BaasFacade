@@ -51,8 +51,7 @@ public class BasicDataClassFacade<T> implements DataClassFacade<T> {
 
 	@Override
 	public DataQuery<T> newQuery() {
-		// TODO Auto-generated method stub
-		return null;
+		return new BasicDataQuery<T>(this, factory.createDataObjectQuery(clazz.getSimpleName()));
 	}
 
 	@Override

@@ -14,5 +14,9 @@ public interface GameScore extends DataInterface {
 	
 	public Boolean active(); // in case data store has not value or when sorting
 	public void active(boolean in);
+	
+	public Game game();
+	public void game(Game in);
+
 //	public static final ParseFacade<GameScore> PF = ParseFacade.get(GameScore.class);
 }

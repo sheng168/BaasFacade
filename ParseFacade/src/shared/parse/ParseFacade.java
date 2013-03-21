@@ -6,7 +6,6 @@ import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.List;
 
-import shared.baas.DataClassFacade;
 import shared.baas.keyvalue.DataObject;
 import shared.parse.query.ParseQueryEqualHandler;
 import shared.parse.query.ParseQueryIncludeHandler;
@@ -29,7 +28,7 @@ import com.parse.ParseQuery;
  * 
  * @param <T>
  */
-public class ParseFacade<T> implements DataClassFacade<T> {
+public class ParseFacade<T> {
 	Class<T> clazz;
 	Class<?>[] interfaces;
 
@@ -59,8 +58,6 @@ public class ParseFacade<T> implements DataClassFacade<T> {
 	 * 
 	 * @see shared.parse.DataStoreFacade#create()
 	 */
-	// @Override
-	@Override
 	public T create() {
 		ParseObject po = new ParseObject(clazz.getSimpleName());
 		return wrap(po);
@@ -76,7 +73,6 @@ public class ParseFacade<T> implements DataClassFacade<T> {
 		return (T) obj;
 	}
 	
-	@Override
 	public T wrap(DataObject object) {
 		// TODO Auto-generated method stub
 		return null;
@@ -110,8 +106,6 @@ public class ParseFacade<T> implements DataClassFacade<T> {
 	 * 
 	 * @see shared.parse.DataStoreFacade#newQuery()
 	 */
-	// @Override
-	@Override
 	public Query<T> newQuery() {
 		// new ParseQuery(RegionUser.class.getSimpleName())
 		// .whereEqualTo("name", name)
@@ -119,15 +113,6 @@ public class ParseFacade<T> implements DataClassFacade<T> {
 		// .
 
 		return new Query<T>(this);
-	}
-
-
-	@Override
-	public shared.baas.DataQuery<T> newOrQuery(shared.baas.DataQuery<T>... queries) {
-		Query<T>[] queries_ = new Query[queries.length];
-		
-		System.arraycopy(queries, 0, queries_, 0, queries.length);
-		return newOrQuery(queries_);
 	}
 
 	/*
@@ -158,7 +143,7 @@ public class ParseFacade<T> implements DataClassFacade<T> {
 		return query;
 	}
 
-	public static class Query<T> implements shared.baas.DataQuery<T> {
+	public static class Query<T> {
 		ParseFacade<T> facade;
 		ParseQuery pq;
 
@@ -171,7 +156,6 @@ public class ParseFacade<T> implements DataClassFacade<T> {
 			pq = new ParseQuery(simpleName);
 		}
 
-		@Override
 		@SuppressWarnings("unchecked")
 		public T equalTo() {
 			return (T) Proxy.newProxyInstance(facade.clazz.getClassLoader(),
@@ -184,21 +168,18 @@ public class ParseFacade<T> implements DataClassFacade<T> {
 					facade.interfaces, new ParseQueryNotEqualHandler(pq));
 		}
 
-		@Override
 		@SuppressWarnings("unchecked")
 		public T orderAsc() {
 			return (T) Proxy.newProxyInstance(facade.clazz.getClassLoader(),
 					facade.interfaces, new ParseQueryOrderAscHandler(pq));
 		}
 
-		@Override
 		@SuppressWarnings("unchecked")
 		public T orderDesc() {
 			return (T) Proxy.newProxyInstance(facade.clazz.getClassLoader(),
 					facade.interfaces, new ParseQueryOrderDescHandler(pq));
 		}
 
-		@Override
 		@SuppressWarnings("unchecked")
 		// cast to T
 		public T include() {
@@ -206,6 +187,7 @@ public class ParseFacade<T> implements DataClassFacade<T> {
 					facade.interfaces, new ParseQueryIncludeHandler(pq));
 		}
 
+//		@Override
 //		@Override
 		public List<T> find() throws ParseException {
 			return facade.wrap(pq.find());

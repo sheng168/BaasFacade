@@ -4,21 +4,21 @@ import java.util.List;
 
 
 
-public interface DataObjectQuery {
+public abstract class DataObjectQuery {
 
-	void whereEqualTo(String key, Object value);
+	public abstract DataObjectQuery whereEqualTo(String key, Object value);
 
-	void whereNotEqualTo(String key, Object value);
+	public abstract DataObjectQuery whereNotEqualTo(String key, Object value);
 
-	DataObjectQuery whereGreaterThan(String key, Object value);
+	public abstract DataObjectQuery whereGreaterThan(String key, Object value);
 
-	void orderByAsc(String key);
+	public abstract DataObjectQuery orderByAsc(String key);
 
-	void orderByDesc(String key);
+	public abstract DataObjectQuery orderByDesc(String key);
 
-	void isInRange(int skip, int count);
+	public abstract DataObjectQuery isInRange(int skip, int count);
 
-	ListenableFuture<List<DataObject>> find();
+	public abstract ListenableFuture<List<DataObject>> find();
 
 //	void findInBackground(ListCallback<DataObject> callback);
 

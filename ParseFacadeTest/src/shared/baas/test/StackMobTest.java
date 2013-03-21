@@ -4,9 +4,7 @@ import java.util.HashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 
-import org.junit.Before;
-import org.junit.Test;
-
+import junit.framework.TestCase;
 import shared.baas.DataClassFacade;
 
 import com.stackmob.sdk.api.StackMob;
@@ -14,17 +12,16 @@ import com.stackmob.sdk.api.StackMobQuery;
 import com.stackmob.sdk.callback.StackMobCallback;
 import com.stackmob.sdk.exception.StackMobException;
 
-public class StackMobTest {
+public class StackMobTest extends TestCase {
 	StackMobFacadeFactory ff = new StackMobFacadeFactory("37c7ebb3-b6c8-43c7-9bfa-79a5ed82fecc", "c19eae0d-993e-49c7-a430-a30643dff36c");
 	final DataClassFacade<GameScore> f = ff.get(GameScore.class);
 	CountDownLatch latch;
 	
-	@Before
+	@Override
 	public void setUp() throws Exception {
 		latch = new CountDownLatch(1);
 	}
 	
-	@Test
 	public void testQuery() throws InterruptedException, ExecutionException {
 		StackMob.getStackMob().getDatastore().get(new StackMobQuery("gamescore").isInRange(0, 1).fieldIsEqualTo("gamescore_id", "0ba61abb1b9144dc84bfe5511f2a3286"), new StackMobCallback() {
 			@Override
@@ -41,7 +38,6 @@ public class StackMobTest {
 		Thread.sleep(1000);
 	}
 
-	@Test
 	public void testDelete() throws InterruptedException, ExecutionException {
 		StackMob.getStackMob().getDatastore().delete("gamescore", "0ba61abb1b9144dc84bfe5511f2a3286", new StackMobCallback() {
 			@Override
@@ -58,7 +54,6 @@ public class StackMobTest {
 		Thread.sleep(1000);
 	}
 
-	@Test
 	public void testGet() throws InterruptedException, ExecutionException {
 		StackMob.getStackMob().getDatastore().get("gamescore", new StackMobCallback() {
 			@Override
@@ -75,7 +70,6 @@ public class StackMobTest {
 		Thread.sleep(1000);
 	}
 
-	@Test
 	public void testMap() throws InterruptedException, ExecutionException {
 		
 		
@@ -99,7 +93,6 @@ public class StackMobTest {
 		Thread.sleep(1000);
 	}
 	
-	@Test
 	public void testJsonString() throws InterruptedException, ExecutionException {
 		StackMob.getStackMob().getDatastore().post("gamescore", "{\n" + 
 				"  \"name\": \"sheng\",\n" + 

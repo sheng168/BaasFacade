@@ -23,7 +23,7 @@ import com.stackmob.sdk.callback.StackMobCallback;
 import com.stackmob.sdk.exception.StackMobException;
 //import shared.baas.DataObject;
 
-public class DataObjectQuerySM implements DataObjectQuery {
+public class DataObjectQuerySM extends DataObjectQuery {
 	String className;
 //	private String id;
 //	Map<String, Object> obj = new HashMap<String, Object>();
@@ -40,13 +40,15 @@ public class DataObjectQuerySM implements DataObjectQuery {
 	}
 
 	@Override
-	public void whereEqualTo(String key, Object value) {
+	public DataObjectQuery whereEqualTo(String key, Object value) {
 		query.fieldIsEqualTo(key, value.toString());
+		return this;
 	}
 
 	@Override
-	public void whereNotEqualTo(String key, Object value) {
+	public DataObjectQuery whereNotEqualTo(String key, Object value) {
 		query.fieldIsNotEqual(key, value.toString());
+		return this;
 	}
 
 	@Override
@@ -56,18 +58,21 @@ public class DataObjectQuerySM implements DataObjectQuery {
 	}
 
 	@Override
-	public void orderByAsc(String key) {
+	public DataObjectQuery orderByAsc(String key) {
 		query.fieldIsOrderedBy(key, Ordering.ASCENDING);
+		return this;
 	}
 
 	@Override
-	public void orderByDesc(String key) {
+	public DataObjectQuery orderByDesc(String key) {
 		query.fieldIsOrderedBy(key, Ordering.DESCENDING);
+		return this;
 	}
 
 	@Override
-	public void isInRange(int skip, int count) {
+	public DataObjectQuery isInRange(int skip, int count) {
 		query.isInRange(skip, skip + count - 1);
+		return this;
 	}
 
 //	@Override

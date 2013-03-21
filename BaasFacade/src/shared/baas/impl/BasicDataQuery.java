@@ -5,14 +5,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import shared.baas.DataQuery;
-import shared.baas.ListCallback;
 import shared.baas.keyvalue.DataObject;
 import shared.baas.keyvalue.DataObjectQuery;
 import shared.baas.keyvalue.ListenableFuture;
 import shared.baas.keyvalue.ListenableFuture.Basic;
 import shared.baas.keyvalue.ListenableFuture.Listener;
 
-public class BasicDataQuery<T> implements DataQuery<T> {
+public class BasicDataQuery<T> extends DataQuery<T> {
 	BasicDataClassFacade<T> facade;
 //	SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
 //	StringBuilder orderBy = new StringBuilder();
@@ -27,6 +26,7 @@ public class BasicDataQuery<T> implements DataQuery<T> {
 	}
 
 //	@Override
+	@Override
 	public ListenableFuture<List<T>> find() {
 		final Basic<List<T>> future = new ListenableFuture.Basic<List<T>>();
 		

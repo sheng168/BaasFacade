@@ -15,7 +15,7 @@ import android.content.ContentValues;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
-public class DataObjectSqlite implements DataObject {
+public class DataObjectSqlite extends DataObject {
 	final ContentValues values = new ContentValues();
 	
 	ContentResolver cr;
@@ -76,14 +76,24 @@ public class DataObjectSqlite implements DataObject {
 		
 		try {
 			Uri url = Uri.withAppendedPath(baseUri, className);
-			Uri insert = cr.insert(url, values);
-			if (insert == null) {
-				future.set(null, new Exception("insert return null Uri"));
+			Long _id = values.getAsLong(BaseColumns._ID);
+			if (_id == null) {
+				Uri insert = cr.insert(url, values);
+				if (insert == null) {
+					future.set(null, new Exception("insert return null Uri"));
+				} else {
+					List<String> segs = insert.getPathSegments();
+					String id = segs.get(segs.size() - 1);
+					values.put(BaseColumns._ID, id);
+					future.set(id, null);
+				}
 			} else {
-				List<String> segs = insert.getPathSegments();
-				String id = segs.get(segs.size() - 1);
-				values.put(BaseColumns._ID, id);
-				future.set(id, null);
+				int update = cr.update(Uri.withAppendedPath(url, _id.toString()), values, null, null);
+				if (update == 1) {
+					future.set(_id.toString(), null);
+				} else {
+					future.set(null, new Exception(update + " updated for id: " + _id));
+				}
 			}
 		} catch (Exception e) {
 			future.set(null, e);
@@ -92,7 +102,7 @@ public class DataObjectSqlite implements DataObject {
 		return future;
 	}
 
-	@Override
+//	@Override
 	public void deleteInBackground(DoCallback callback) {
 		Uri url = Uri.withAppendedPath(baseUri, className);
 //		url = Uri.withAppendedPath(url, getObjectId());

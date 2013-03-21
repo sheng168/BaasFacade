@@ -4,7 +4,7 @@ import java.util.List;
 
 import shared.baas.keyvalue.ListenableFuture;
 
-public interface DataQuery<T> {
+public abstract class DataQuery<T> {
 	public abstract T equalTo();
 
 	public abstract T orderAsc();
@@ -12,7 +12,9 @@ public interface DataQuery<T> {
 
 	public abstract T include();
 
-//	ListenableFuture<List<T>> find() throws Exception;
+	public ListenableFuture<List<T>> find() {
+		throw new UnsupportedOperationException();
+	}
 
 //	public abstract List<T> find() throws Exception;
 

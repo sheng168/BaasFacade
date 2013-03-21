@@ -4,7 +4,7 @@ import java.util.Date;
 
 import shared.baas.keyvalue.DataObject;
 
-public abstract class AbstractDataObject implements DataObject {
+public abstract class AbstractDataObject extends DataObject {
 
 //	public AbstractObjectData() {
 //		super();

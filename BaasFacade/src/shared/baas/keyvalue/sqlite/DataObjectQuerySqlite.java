@@ -12,7 +12,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
-public class DataObjectQuerySqlite implements DataObjectQuery {
+public class DataObjectQuerySqlite extends DataObjectQuery {
 //	SqliteFacade<T> facade;
 //	SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
 	StringBuilder orderBy = new StringBuilder();
@@ -77,8 +77,9 @@ public class DataObjectQuerySqlite implements DataObjectQuery {
 	}
 
 	@Override
-	public void whereEqualTo(String key, Object value) {
+	public DataObjectQuery whereEqualTo(String key, Object value) {
 		appendWhere(key + " = ?", value);
+		return this;
 	}
 
 	
@@ -99,8 +100,9 @@ public class DataObjectQuerySqlite implements DataObjectQuery {
 	}
 
 	@Override
-	public void whereNotEqualTo(String key, Object value) {
+	public DataObjectQuery whereNotEqualTo(String key, Object value) {
 		appendWhere(key + " <> ?", value);
+		return this;
 	}
 
 //	@Override
@@ -119,27 +121,30 @@ public class DataObjectQuerySqlite implements DataObjectQuery {
 	}
 
 	@Override
-	public void orderByAsc(String key) {
+	public DataObjectQuery orderByAsc(String key) {
 		if (orderBy.length() > 0) {
 			orderBy.append(", ");
 		}
 		
 		orderBy.append(key).append(" asc");
+		return this;
 	}
 
 	@Override
-	public void orderByDesc(String key) {
+	public DataObjectQuery orderByDesc(String key) {
 		if (orderBy.length() > 0) {
 			orderBy.append(", ");
 		}
 		
 		orderBy.append(key).append(" desc");
+		return this;
 	}
 
 	@Override
-	public void isInRange(int skip, int count) {
+	public DataObjectQuery isInRange(int skip, int count) {
 		this.skip = skip;
 		this.count = count;
+		return this;
 	}
 }
 
