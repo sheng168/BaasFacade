@@ -25,7 +25,8 @@ public abstract class KeyValueAbstractTest extends AndroidTestCase {
 		DataClassFacade<GameScore> facade = factory.get(GameScore.class);
 		
 		GameScore gameScore = facade.create();
-		gameScore.score(1339);
+		int score = 1369;
+		gameScore.score(score);
 		gameScore.playerName("Sheng");
 		gameScore.cheatMode(true);
 		gameScore.active(true);
@@ -35,6 +36,22 @@ public abstract class KeyValueAbstractTest extends AndroidTestCase {
 		
 		String id = gameScore.dataObject().save().get();
 		assertNotNull(id);
+		
+		DataQuery<GameScore> query = facade.newQuery();
+		Game inc = query.include().game();
+		query.equalTo().score(score);
+		List<GameScore> list = query.find().get();
+		for (GameScore gs2 : list) {
+			assertNotNull(gs2);
+			
+			Game game2 = gs2.game();
+			assertNotNull(game2);
+			
+			String name = game2.name();
+			assertEquals("My Game", name);
+		}
+		
+		assertNotNull("can't chain yet", inc);
 	}
 	
 	public void testDataInterface() throws InterruptedException, ExecutionException {

@@ -25,7 +25,6 @@ public interface DataInterface {
 //	@Deprecated
 //	Object unwrap();
 	
-	@Deprecated
 	@Override
 	String toString();
 	

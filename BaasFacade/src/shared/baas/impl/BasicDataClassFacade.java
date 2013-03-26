@@ -39,6 +39,13 @@ public class BasicDataClassFacade<T> implements DataClassFacade<T> {
 				new InterfaceHandler(object));
 		return (T) obj;
 	}
+	
+	@SuppressWarnings("unchecked")
+	public static <T> T wrap(DataObject object, Class<T> clazz) {
+		Object obj = Proxy.newProxyInstance(clazz.getClassLoader(), new Class[] {clazz},
+				new InterfaceHandler(object));
+		return (T) obj;
+	}
 
 	@Override
 	public T create() {		

@@ -40,7 +40,7 @@ public class DataObjectSM extends DataObject {
 
 //	@Override
 	public void refreshInBackground(final DoCallback callback) {
-		dataStore().get(className+"/"+getId(), new StackMobCallback() {
+		dataStore().get(className+"/"+getObjectId(), new StackMobCallback() {
 			@Override
 			public void success(String responseBody) {
 				callback.done();
@@ -66,7 +66,7 @@ public class DataObjectSM extends DataObject {
 //				Map<String, Object> map = gson.fromJson(json, Map.class);
 				jsonObject = json.getAsJsonObject();
 
-				future.set(getId(), null);
+				future.set(getObjectId(), null);
 			}
 
 			@Override
@@ -75,7 +75,7 @@ public class DataObjectSM extends DataObject {
 			}
 		};
 		
-		final String id = getId();
+		final String id = getObjectId();
 		if (id == null) {
 			dataStore().post(className, jsonObject.toString(), stackMobCallback);
 		} else {
@@ -87,7 +87,7 @@ public class DataObjectSM extends DataObject {
 
 //	@Override
 	public void deleteInBackground(final DoCallback callback) {
-		dataStore().delete(className, getId(), new StackMobCallback() {
+		dataStore().delete(className, getObjectId(), new StackMobCallback() {
 			@Override
 			public void success(String responseBody) {
 				callback.done();
@@ -140,7 +140,7 @@ public class DataObjectSM extends DataObject {
 			throw new IllegalArgumentException(key+":"+value);
 	}
 
-	String getId() {
+	public String getObjectId() {
 		final String id_key = id_key();
 		JsonElement jsonElement = jsonObject.get(id_key);
 		if (jsonElement == null)

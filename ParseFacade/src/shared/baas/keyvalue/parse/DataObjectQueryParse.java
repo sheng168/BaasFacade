@@ -102,4 +102,10 @@ public class DataObjectQueryParse extends DataObjectQuery {
 		
 		return future;
 	}
+
+	@Override
+	public DataObjectQuery include(String name) {
+		query.include(name);
+		return super.include(name);
+	}
 }

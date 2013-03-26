@@ -1,5 +1,6 @@
 package shared.baas.impl;
 
+import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.List;
@@ -82,8 +83,9 @@ public class BasicDataQuery<T> extends DataQuery<T> {
 		return (T) Proxy.newProxyInstance(facade.getClazz().getClassLoader(), 
 				facade.getInterfaces(), new HandlerZeroArg() {
 					@Override
-					protected void doNameValue(String name) {
+					protected Object doNameValue(String name) {
 						keyValueQuery.orderByAsc(name);
+						return null;
 					}
 				});
 	}
@@ -94,10 +96,38 @@ public class BasicDataQuery<T> extends DataQuery<T> {
 		return (T) Proxy.newProxyInstance(facade.getClazz().getClassLoader(), 
 				facade.getInterfaces(), new HandlerZeroArg() {
 					@Override
-					protected void doNameValue(String name) {
+					protected Object doNameValue(String name) {
 						keyValueQuery.orderByDesc(name);
+						return null;
 					}
 				});
+	}
+
+	private final class HandlerForInclude extends HandlerZeroArg {
+		String prefix;
+		
+		public HandlerForInclude(String prefix) {
+			this.prefix = prefix;
+		}
+		
+		@Override
+		protected Object doNameValue(String name) {			
+			return null;
+		}
+
+		@Override
+		public Object invoke(Object proxy, Method m, Object[] args)
+				throws Throwable {
+			super.invoke(proxy, m, args); // check
+			
+			String name = prefix + m.getName();
+			keyValueQuery.include(name);
+			
+			String prefix = name + ".";				
+			final Class<?>[] interfaces = {m.getReturnType()};
+			final Object pInst = Proxy.newProxyInstance(m.getReturnType().getClassLoader(), interfaces, new HandlerForInclude(prefix));
+			return pInst;
+		}
 	}
 
 	@Override
@@ -105,12 +135,7 @@ public class BasicDataQuery<T> extends DataQuery<T> {
 	// cast to T
 	public T include() {
 		return (T) Proxy.newProxyInstance(facade.getClazz().getClassLoader(), 
-				facade.getInterfaces(), new HandlerZeroArg() {
-					@Override
-					protected void doNameValue(String name) {
-						System.out.println("include " + name);
-					}
-				});
+				facade.getInterfaces(), new HandlerForInclude(""));
 	}
 
 //	@Override

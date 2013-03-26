@@ -17,7 +17,7 @@ public abstract class DataObject {
 //	public abstract Date getCreatedAt();
 //	public abstract Date getUpdatedAt();
 //
-//	public abstract String getObjectId();
+	public abstract String getObjectId();
 //	public abstract void setObjectId(String newObjectId);
 
 //	public abstract boolean isDataAvailable();

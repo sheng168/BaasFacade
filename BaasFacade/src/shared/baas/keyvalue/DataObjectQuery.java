@@ -20,6 +20,10 @@ public abstract class DataObjectQuery {
 
 	public abstract ListenableFuture<List<DataObject>> find();
 
+	public DataObjectQuery include(String name) {
+		return this;
+	}
+
 //	void findInBackground(ListCallback<DataObject> callback);
 
 }

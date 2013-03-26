@@ -16,7 +16,10 @@ import com.parse.SaveCallback;
 //import shared.baas.DataObject;
 
 public class DataObjectParse extends DataObject {
-	ParseObject obj;
+	/**
+	 * if you are using this type directly, you can access this value
+	 */
+	public final ParseObject obj;
 
 	public DataObjectParse(String className) {
 		this(new ParseObject(className));
@@ -29,26 +32,36 @@ public class DataObjectParse extends DataObject {
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T get(String key, Class<T> type) {
+		// provide uniform access to all keys
 		if (OBJECT_ID.equals(key))
 			return (T) obj.getObjectId();
 		else if (UPDATED_AT.equals(key))
 			return obj.getUpdatedAt() == null?null:(T) Long.valueOf(obj.getUpdatedAt().getTime());		
 		else if (CREATED_AT.equals(key))
 			return obj.getCreatedAt() == null?null:(T) Long.valueOf(obj.getCreatedAt().getTime());
-		else
-			return (T) obj.get(key);
+		else {
+			Object object = obj.get(key);
+			if (object instanceof ParseObject)
+				return (T) new DataObjectParse((ParseObject)object);
+			else
+				return (T) object;
+		}
 	}
 
 	@Override
 	public void put(String key, Object value) {
 		if (OBJECT_ID.equals(key))
-			obj.setObjectId((String) value);
+			obj.setObjectId((String) value); // allow on new objects
+		else if (UPDATED_AT.equals(key))
+			throw new IllegalArgumentException("field can't be set: " + key);
+		else if (CREATED_AT.equals(key))
+			throw new IllegalArgumentException("field can't be set: " + key);
 		else if (value == null) {
 			obj.remove(key);
 		} else if (value instanceof DataObjectParse) {
 			obj.put(key, ((DataObjectParse)value).obj);
 		} else {
-			obj.put(key, value); //TODO reject updatedAt here?
+			obj.put(key, value);
 		}
 	}
 
@@ -101,5 +114,9 @@ public class DataObjectParse extends DataObject {
 				}
 			}
 		});
+	}
+	@Override
+	public String getObjectId() {
+		return obj.getObjectId();
 	}
 }

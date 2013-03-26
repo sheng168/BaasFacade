@@ -42,13 +42,13 @@ public class InterfaceHandler implements InvocationHandler {
 				Object object = obj.get(key, returnType);
 				if (returnType.isPrimitive() && object == null) {
 					return 0;
-				} else if (object != null
-						&& DataObject.class.isInstance(object)
-						&& DataInterface.class.isAssignableFrom(returnType)) {
+				} else if (DataInterface.class.isAssignableFrom(returnType)) {
+					DataObject dataObject = obj.get(key, DataObject.class);
+					Object wrap = BasicDataClassFacade.wrap(dataObject, returnType);
 //					DataFacadeFactory factory = obj.getFactory();					
 //					return (factory.get(returnType))
 //							.wrap((DataObject) object);
-					return null; //TODO
+					return wrap; //TODO
 				} else if (object != null && !returnType.isInstance(object)
 						&& !returnType.isPrimitive()) {
 					return null;

@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.UUID;
 
 import shared.baas.DoCallback;
 import shared.baas.keyvalue.DataObject;
@@ -60,6 +61,11 @@ public class DataObjectSqlite extends DataObject {
 		
 		else if (value instanceof byte[])
 			values.put(key, (byte[])value);
+		else if (value instanceof DataObjectSqlite) {			
+			DataObjectSqlite dataObjectSqlite = (DataObjectSqlite)value;
+			values.put(key, dataObjectSqlite.getObjectId());
+			dataObjectSqlite.save(); // TODO sqlite will save related object first when added
+		}
 		else
 			throw new IllegalArgumentException(key+":"+value + " class:" + value.getClass());
 	}
@@ -75,6 +81,7 @@ public class DataObjectSqlite extends DataObject {
 		final Basic<String> future = new ListenableFuture.Basic<String>();
 		
 		try {
+			getObjectId(); // generate id if doesn't exist
 			Uri url = Uri.withAppendedPath(baseUri, className);
 			Long _id = values.getAsLong(BaseColumns._ID);
 			if (_id == null) {
@@ -123,5 +130,15 @@ public class DataObjectSqlite extends DataObject {
 			hashSet.add(f.getKey());
 		}
 		return hashSet;
+	}
+
+	@Override
+	public String getObjectId() {		
+		String id = get(OBJECT_ID, String.class);
+		if (id == null) {
+			id = UUID.randomUUID().toString();
+			put(OBJECT_ID, id);
+		}
+		return id;
 	}
 }
