@@ -29,10 +29,10 @@ public class ParseQueryIncludeHandler implements InvocationHandler {
 				// support chaining
 				String prefix = name + ".";				
 				final Class[] interfaces = {returnType};
-				System.out.println("ParseQueryIncludeHandler.invoke()" + interfaces);
+//				System.out.println("ParseQueryIncludeHandler.invoke()" + interfaces);
 				final Object pInst = Proxy.newProxyInstance(returnType.getClassLoader(), interfaces, new ParseQueryIncludeHandler(prefix, pq));
 				
-				System.out.println("chain " + prefix);
+//				System.out.println("chain " + prefix);
 				return pInst;
 			} else {
 				return null;
@@ -44,7 +44,7 @@ public class ParseQueryIncludeHandler implements InvocationHandler {
 
 	void include(String name) {
 		final String string = prefix + name;
-		System.out.println("include:" + string);
+//		System.out.println("include:" + string);
 		pq.include(string);
 	}
 
