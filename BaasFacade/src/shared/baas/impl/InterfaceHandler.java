@@ -3,7 +3,6 @@ package shared.baas.impl;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 
-import shared.baas.DataFacadeFactory;
 import shared.baas.DataInterface;
 import shared.baas.keyvalue.DataObject;
 //import shared.baas.DataObject;
@@ -28,8 +27,9 @@ public class InterfaceHandler implements InvocationHandler {
 			// built-in
 			if (DataInterface.OBJECT.equals(key))
 				return obj;
-			if ("toString".equals(key))
-				return obj.toString();
+			if ("toString".equals(key)) {
+				return "DynamicProxy: " + obj.toString();
+			}
 //			if (ParseBase.PARSE_OBJECT.equals(key))
 //				return obj;
 			

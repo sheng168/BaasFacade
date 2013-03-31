@@ -5,6 +5,7 @@ import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.List;
 
+import shared.baas.DataInterface;
 import shared.baas.DataQuery;
 import shared.baas.keyvalue.DataObject;
 import shared.baas.keyvalue.DataObjectQuery;
@@ -60,11 +61,15 @@ public class BasicDataQuery<T> extends DataQuery<T> {
 					@Override
 					protected void doNameValue(String name, Object arg) {
 //						qb.appendWhere(name + " = ?");
+						if (arg instanceof DataInterface) {
+							arg = ((DataInterface)arg).dataObject();
+						}
 						keyValueQuery.whereEqualTo(name, arg);
 					}
 				});
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public T notEqualTo() {
 		return (T) Proxy.newProxyInstance(facade.getClazz().getClassLoader(),

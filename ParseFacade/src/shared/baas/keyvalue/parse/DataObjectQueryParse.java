@@ -25,6 +25,10 @@ public class DataObjectQueryParse extends DataObjectQuery {
 	// equality
 	@Override
 	public DataObjectQuery whereEqualTo(String key, Object value) {
+		if (value instanceof DataObjectParse) {
+			value = ((DataObjectParse)value).obj;
+		}
+			
 		query.whereEqualTo(key, value);
 		return this;
 	}

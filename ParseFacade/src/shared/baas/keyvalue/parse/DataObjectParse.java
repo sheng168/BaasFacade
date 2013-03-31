@@ -36,9 +36,9 @@ public class DataObjectParse extends DataObject {
 		if (OBJECT_ID.equals(key))
 			return (T) obj.getObjectId();
 		else if (UPDATED_AT.equals(key))
-			return obj.getUpdatedAt() == null?null:(T) Long.valueOf(obj.getUpdatedAt().getTime());		
+			return obj.getUpdatedAt() == null?null:(T) (obj.getUpdatedAt());		
 		else if (CREATED_AT.equals(key))
-			return obj.getCreatedAt() == null?null:(T) Long.valueOf(obj.getCreatedAt().getTime());
+			return obj.getCreatedAt() == null?null:(T) (obj.getCreatedAt());
 		else {
 			Object object = obj.get(key);
 			if (object instanceof ParseObject)

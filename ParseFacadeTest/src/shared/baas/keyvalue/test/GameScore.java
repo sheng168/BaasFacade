@@ -1,5 +1,7 @@
 package shared.baas.keyvalue.test;
 
+import shared.baas.DataClassFacade;
+import shared.baas.DataFacadeFactory;
 import shared.baas.DataInterface;
 
 public interface GameScore extends DataInterface {
@@ -18,5 +20,6 @@ public interface GameScore extends DataInterface {
 	public Game game();
 	public void game(Game in);
 
-//	public static final ParseFacade<GameScore> PF = ParseFacade.get(GameScore.class);
+	public static final DataClassFacade<GameScore> facade 
+		= DataFacadeFactory.getDefault().get(GameScore.class);
 }

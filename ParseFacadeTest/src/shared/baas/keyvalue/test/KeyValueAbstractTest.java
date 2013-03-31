@@ -5,7 +5,6 @@ import java.util.concurrent.ExecutionException;
 
 import shared.baas.DataClassFacade;
 import shared.baas.DataQuery;
-import shared.baas.impl.BasicDataQuery;
 import shared.baas.keyvalue.DataObject;
 import shared.baas.keyvalue.DataObjectFactory;
 import shared.baas.keyvalue.DataObjectQuery;
@@ -72,8 +71,16 @@ public abstract class KeyValueAbstractTest extends AndroidTestCase {
 		DataQuery<GameScore> query = facade.newQuery();
 		query.equalTo().score(1339);
 		query.equalTo().active(true);
-		List<GameScore> list = ((BasicDataQuery<GameScore>)query).find().get();
+		List<GameScore> list = (query).find().get();
 		assertNotNull(list);
+		
+		int score = gameScore.score();
+		String playerName = gameScore.playerName();
+		boolean cheatMode = gameScore.cheatMode();
+
+		String objectId = gameScore.dataObject().getObjectId();
+//		Date updatedAt = gameScore.dataObject().getUpdatedAt();
+//		Date createdAt = gameScore.dataObject().getCreatedAt();
 		
 		for (GameScore gs : list) {
 			gs.active(false);

@@ -6,6 +6,7 @@ import shared.baas.keyvalue.ListenableFuture;
 
 public abstract class DataQuery<T> {
 	public abstract T equalTo();
+	public abstract T notEqualTo();
 
 	public abstract T orderAsc();
 	public abstract T orderDesc();

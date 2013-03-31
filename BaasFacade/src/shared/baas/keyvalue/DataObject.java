@@ -1,5 +1,6 @@
 package shared.baas.keyvalue;
 
+import java.util.Date;
 import java.util.Set;
 
 public abstract class DataObject {
@@ -14,8 +15,12 @@ public abstract class DataObject {
 
 //	public abstract String getClassName();
 
-//	public abstract Date getCreatedAt();
-//	public abstract Date getUpdatedAt();
+	public Date getCreatedAt() {
+		return get(CREATED_AT, Date.class);
+	}
+	public Date getUpdatedAt() {
+		return get(UPDATED_AT, Date.class);
+	}
 //
 	public abstract String getObjectId();
 //	public abstract void setObjectId(String newObjectId);
