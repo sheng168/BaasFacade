@@ -1,5 +1,7 @@
 package shared.baas.keyvalue.sqlite;
 
+import java.util.Date;
+
 import shared.baas.DataInterface;
 import shared.baas.keyvalue.DataObject;
 import android.content.ContentResolver;
@@ -38,6 +40,8 @@ public class DataObjectWithCursor extends DataObjectSqlite {
 				dataObjectSqlite.put(OBJECT_ID, id);
 				object = dataObjectSqlite;
 			}
+			else if (type.isAssignableFrom(Date.class))
+				object = new Date(cursor.getLong(columnIndex));
 			else
 				throw new UnsupportedOperationException("don't know how to get value of type: " + type);
 		}

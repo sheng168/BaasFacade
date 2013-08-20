@@ -1,5 +1,7 @@
 package shared.baas;
 
+import java.util.Date;
+
 import shared.baas.keyvalue.DataObject;
 
 
@@ -15,27 +17,17 @@ import shared.baas.keyvalue.DataObject;
  */
 public interface DataInterface {
 	static final String OBJECT = "dataObject";
-//	static final String SAVE = "saveAsync";
-//	static final String DELETE = "deleteAsync";
-	
-	/**
-	 * @deprecated in case of emergency only
-	 * @return the backing object
-	 */
-//	@Deprecated
-//	Object unwrap();
 	
 	@Override
 	String toString();
 	
 	DataObject dataObject();
-//	String objectId();
-//	void objectId(String in);
-//	
-//	Date createdAt();
-//	Date updatedAt();
-//	
-//	Future<? extends ObjectBase> saveAsync(GetCallback<? extends ObjectBase> getCallback);
-//	Future<? extends ObjectBase> deleteAsync(GetCallback<? extends ObjectBase> getCallback);
-
+	String objectId();
+	void objectId(String in);
+	
+	Date createdAt(); // needed for sorting
+	Date updatedAt();
+	
+	void createdAt(Date in); // needed for filtering
+	void updatedAt(Date in);
 }

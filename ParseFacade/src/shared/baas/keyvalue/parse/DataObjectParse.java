@@ -41,10 +41,15 @@ public class DataObjectParse extends DataObject {
 			return obj.getCreatedAt() == null?null:(T) (obj.getCreatedAt());
 		else {
 			Object object = obj.get(key);
-			if (object instanceof ParseObject)
+			if (object == null) 
+				return null;
+			else if (object instanceof ParseObject)
 				return (T) new DataObjectParse((ParseObject)object);
-			else
+			else //if (type.isAssignableFrom(object.getClass()))
 				return (T) object;
+//			else {
+//				throw new IllegalArgumentException(object.getClass() + " not assignable to " + type);
+//			}
 		}
 	}
 

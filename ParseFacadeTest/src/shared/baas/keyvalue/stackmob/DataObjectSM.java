@@ -14,6 +14,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.stackmob.sdk.api.StackMob;
 import com.stackmob.sdk.api.StackMobDatastore;
+import com.stackmob.sdk.api.StackMobOptions;
 import com.stackmob.sdk.callback.StackMobCallback;
 import com.stackmob.sdk.exception.StackMobException;
 //import shared.baas.DataObject;
@@ -77,7 +78,7 @@ public class DataObjectSM extends DataObject {
 		
 		final String id = getObjectId();
 		if (id == null) {
-			dataStore().post(className, jsonObject.toString(), stackMobCallback);
+			dataStore().post(className, jsonObject.toString(),StackMobOptions.header("X-StackMob-Relations", "game=game"), stackMobCallback);
 		} else {
 			dataStore().put(className, id, jsonObject.toString(), stackMobCallback);
 		}
@@ -104,7 +105,16 @@ public class DataObjectSM extends DataObject {
 	@Override
 	public <T> T get(String key, Class<T> type) {
 		final String lowerCase = key.toLowerCase();
-		return (T) jsonObject.get(lowerCase);
+		final JsonElement jsonElement = jsonObject.get(lowerCase);
+		Object r = null;
+		if (type.equals(String.class))
+			r = jsonElement.getAsString();
+		else if (type.equals(Integer.class))
+			r = jsonElement.getAsInt();
+		else if (type.equals(Boolean.class))
+			r = jsonElement.getAsBoolean();
+		
+		return (T) r;
 	}
 
 	@Override
@@ -140,6 +150,7 @@ public class DataObjectSM extends DataObject {
 			throw new IllegalArgumentException(key+":"+value);
 	}
 
+	@Override
 	public String getObjectId() {
 		final String id_key = id_key();
 		JsonElement jsonElement = jsonObject.get(id_key);

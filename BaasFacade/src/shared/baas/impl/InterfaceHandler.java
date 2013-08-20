@@ -44,6 +44,8 @@ public class InterfaceHandler implements InvocationHandler {
 					return 0;
 				} else if (DataInterface.class.isAssignableFrom(returnType)) {
 					DataObject dataObject = obj.get(key, DataObject.class);
+					if (dataObject == null)
+						return null;
 					Object wrap = BasicDataClassFacade.wrap(dataObject, returnType);
 //					DataFacadeFactory factory = obj.getFactory();					
 //					return (factory.get(returnType))
