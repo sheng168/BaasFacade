@@ -71,7 +71,7 @@ public class DataObjectQueryParse extends DataObjectQuery {
 	public void findInBackground(final ListCallback<DataObject> callback) {
 		query.findInBackground(new FindCallback() {
 			@Override
-			public void done(List<ParseObject> l, ParseException e) {
+			public void done(List l, ParseException e) {
 				if (e == null) {
 					callback.done(null);
 				} else {
@@ -87,7 +87,7 @@ public class DataObjectQueryParse extends DataObjectQuery {
 		
 		query.findInBackground(new FindCallback() {
 			@Override
-			public void done(List<ParseObject> l, ParseException e) {
+			public void done(List l, ParseException e) {
 				if (e == null) {
 					future.set(wrap(l), null);
 				} else {

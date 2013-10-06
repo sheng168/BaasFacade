@@ -133,7 +133,7 @@ public class ParseFacade<T> {
 			list.add(q.pq);
 		}
 
-		Query<T> query = wrap(ParseQuery.or(list));
+		Query<T> query = wrap(ParseQuery.or((List)list));
 		return query;
 	}
 
@@ -196,7 +196,7 @@ public class ParseFacade<T> {
 		public void findInBackground(final ListCallback<T> callback) {
 			pq.findInBackground(new FindCallback() {
 				@Override
-				public void done(List<ParseObject> list, ParseException e) {
+				public void done(List list, ParseException e) {
 					if (e == null) {
 						callback.done(facade.wrap(list));
 					} else {
@@ -227,7 +227,7 @@ public class ParseFacade<T> {
 		public void findInBackground(final shared.baas.ListCallback<T> callback) {
 			pq.findInBackground(new FindCallback() {
 				@Override
-				public void done(List<ParseObject> list, ParseException e) {
+				public void done(List list, ParseException e) {
 					if (e == null) {
 						callback.done(facade.wrap(list));
 					} else {
