@@ -3,6 +3,7 @@ package shared.baas.keyvalue.parse;
 import java.util.ArrayList;
 import java.util.List;
 
+import shared.baas.DataQuery;
 import shared.baas.ListCallback;
 import shared.baas.keyvalue.DataObject;
 import shared.baas.keyvalue.DataObjectQuery;
@@ -111,5 +112,10 @@ public class DataObjectQueryParse extends DataObjectQuery {
 	public DataObjectQuery include(String name) {
 		query.include(name);
 		return super.include(name);
+	}
+
+	public static ParseQuery<ParseObject> unwrap(DataQuery<?> q) {
+		DataObjectQueryParse m = (DataObjectQueryParse)q.dataObjectQuery();
+		return m.query;
 	}
 }

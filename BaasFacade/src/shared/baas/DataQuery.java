@@ -2,6 +2,7 @@ package shared.baas;
 
 import java.util.List;
 
+import shared.baas.keyvalue.DataObjectQuery;
 import shared.baas.keyvalue.ListenableFuture;
 
 public abstract class DataQuery<T> {
@@ -16,6 +17,9 @@ public abstract class DataQuery<T> {
 	public ListenableFuture<List<T>> find() {
 		throw new UnsupportedOperationException();
 	}
+	
+	public abstract DataObjectQuery dataObjectQuery();
+
 
 //	public abstract List<T> find() throws Exception;
 

@@ -158,5 +158,9 @@ public class BasicDataQuery<T> extends DataQuery<T> {
 //
 	}
 
+	@Override
+	public DataObjectQuery dataObjectQuery() {
+		return keyValueQuery;
+	}
 }
 
