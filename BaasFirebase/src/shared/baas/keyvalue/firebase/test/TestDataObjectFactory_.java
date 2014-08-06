@@ -16,7 +16,7 @@ public class TestDataObjectFactory_ {
 		DataObjectFactory factory = new DataObjectFactory_(
 				new Firebase("https://abeona-dev.firebaseio.com/syncedValue/class"));
 		
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 3; i++) {
 			DataObject createDataObject = factory.createDataObject("Test");
 			createDataObject.put("dateString", ""+new Timestamp(System.currentTimeMillis()));
 			String s = createDataObject.save().get();
@@ -30,6 +30,12 @@ public class TestDataObjectFactory_ {
 		
 		System.out.println(list);
 		System.out.println(list.size());
+		
+		Address a = Address.facade.create();
+		a.address("Test");
+		a.active(true);
+		a.radius(234);
+		System.out.println(a.dataObject().save().get());
 		
 		Thread.sleep(1000);
 	}
