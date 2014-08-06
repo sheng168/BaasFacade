@@ -1,0 +1,34 @@
+package shared.baas.keyvalue.firebase.test;
+
+import java.sql.Timestamp;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+
+import shared.baas.keyvalue.DataObject;
+import shared.baas.keyvalue.DataObjectFactory;
+import shared.baas.keyvalue.firebase.DataObjectFactory_;
+
+import com.firebase.client.Firebase;
+
+public class TestDataObjectFactory_ {
+	
+	public static void main(String[] args) throws InterruptedException, ExecutionException {
+		DataObjectFactory factory = new DataObjectFactory_(
+				new Firebase("https://abeona-dev.firebaseio.com/syncedValue/class"));
+		
+		for (int i = 0; i < 10; i++) {
+			String s = factory.createDataObject("Test").put("dateString", ""+new Timestamp(System.currentTimeMillis())).save().get();
+			System.out.println(s);
+		}
+		
+		List<DataObject> list = factory.createDataObjectQuery("Test")
+				.whereGreaterThan(DataObject.UPDATED_AT, System.currentTimeMillis() - 10000)
+				.isInRange(0, 5)
+				.find().get();
+		
+		System.out.println(list);
+		System.out.println(list.size());
+		
+		Thread.sleep(1000);
+	}
+}
