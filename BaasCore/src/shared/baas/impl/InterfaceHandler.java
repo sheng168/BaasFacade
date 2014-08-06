@@ -23,7 +23,7 @@ public class InterfaceHandler implements InvocationHandler {
 		// try {
 		String key = m.getName();
 		
-		if (args.length == 0) {
+		if (args == null || args.length == 0) {
 			// built-in
 			if (DataInterface.OBJECT.equals(key))
 				return obj;

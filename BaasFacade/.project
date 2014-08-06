@@ -30,4 +30,11 @@
 		<nature>com.android.ide.eclipse.adt.AndroidNature</nature>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>src.core</name>
+			<type>2</type>
+			<location>/Users/sheng/Dropbox/share/active/BaasFacade/BaasCore/src</location>
+		</link>
+	</linkedResources>
 </projectDescription>

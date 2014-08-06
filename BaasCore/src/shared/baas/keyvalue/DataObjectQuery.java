@@ -24,6 +24,11 @@ public abstract class DataObjectQuery {
 		return this;
 	}
 
+	public DataObjectQuery whereLessThan(String key, Object value) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 //	void findInBackground(ListCallback<DataObject> callback);
 
 }
